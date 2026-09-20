@@ -21,19 +21,22 @@ export const KeyButton: React.FC<KeyButtonProps> = ({
   highContrast = false,
 }) => {
   let bgClass =
-    'bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100';
+    'bg-slate-200/90 hover:bg-slate-300 text-slate-800 border-b-2 border-slate-300/80 dark:bg-[#1b2536] dark:hover:bg-[#233047] dark:text-slate-100 dark:border-b-2 dark:border-[#0f172a]';
 
   if (state === 'correct') {
     bgClass = highContrast
-      ? 'bg-orange-600 hover:bg-orange-500 text-white'
-      : 'bg-emerald-600 hover:bg-emerald-500 text-white';
+      ? 'bg-orange-600 hover:bg-orange-500 text-white border-b-2 border-orange-800 shadow-sm'
+      : 'bg-emerald-600 hover:bg-emerald-500 text-white border-b-2 border-emerald-800 shadow-sm';
   } else if (state === 'present') {
     bgClass = highContrast
-      ? 'bg-sky-600 hover:bg-sky-500 text-white'
-      : 'bg-amber-500 hover:bg-amber-400 text-white';
+      ? 'bg-sky-600 hover:bg-sky-500 text-white border-b-2 border-sky-800 shadow-sm'
+      : 'bg-amber-500 hover:bg-amber-400 text-white border-b-2 border-amber-700 shadow-sm';
   } else if (state === 'absent') {
     bgClass =
-      'bg-slate-400 hover:bg-slate-400 dark:bg-slate-700/70 dark:hover:bg-slate-700/70 text-slate-200 dark:text-slate-400 opacity-80';
+      'bg-slate-400 text-slate-100 border-b-2 border-slate-500 opacity-60 dark:bg-[#0f172a]/90 dark:text-slate-500 dark:border-b-2 dark:border-black/50 dark:opacity-40';
+  } else if (isWide && value === 'ENTER') {
+    bgClass =
+      'bg-emerald-700/15 hover:bg-emerald-700/25 text-emerald-800 border-b-2 border-emerald-600/30 dark:bg-emerald-950/40 dark:hover:bg-emerald-950/60 dark:text-emerald-400 dark:border-b-2 dark:border-emerald-900/50';
   }
 
   const ariaLabel =
@@ -49,8 +52,8 @@ export const KeyButton: React.FC<KeyButtonProps> = ({
       aria-label={ariaLabel}
       disabled={disabled}
       onClick={() => onClick(value)}
-      className={`touch-manipulation select-none flex items-center justify-center font-bold rounded-md transition-colors active:scale-95 text-sm sm:text-base font-sans cursor-pointer h-12 sm:h-14 ${
-        isWide ? 'px-3 sm:px-4 flex-[1.5]' : 'flex-1'
+      className={`keycap-btn touch-manipulation select-none flex items-center justify-center font-bold rounded-lg sm:rounded-xl active:scale-[0.96] text-xs sm:text-sm font-sans cursor-pointer h-12 sm:h-13 transition-colors ${
+        isWide ? 'px-2 sm:px-3 text-[11px] sm:text-xs flex-[1.4] font-black tracking-wider' : 'flex-1'
       } ${bgClass}`}
     >
       {display || value}
