@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-correct: #10b981;
+    --color-present: #f59e0b;
+    --color-absent: #64748b;
+    --app-bg: #f8fafc;
+    --surface-bg: #ffffff;
+    --border-subtle: #e2e8f0;
+  }
+
+  .dark {
+    --color-correct: #10b981;
+    --color-present: #f59e0b;
+    --color-absent: #475569;
+    --app-bg: #090d16;
+    --surface-bg: #111827;
+    --border-subtle: #1e293b;
+  }
+
+  .high-contrast {
+    --color-correct: #ea580c; /* High-contrast orange */
+    --color-present: #0284c7; /* High-contrast sky blue */
+    --color-absent: #475569;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-[#090d16] dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased font-sans selection:bg-emerald-500 selection:text-white;
+    background-image: radial-gradient(at top center, rgba(16, 185, 129, 0.04) 0%, transparent 70%);
+  }
+
+  .dark body {
+    background-image: radial-gradient(at top center, rgba(16, 185, 129, 0.08) 0%, rgba(9, 13, 22, 1) 75%);
+  }
+}
+
+/* 3D Tile and Keycap Depth */
+.tile-perspective {
+  perspective: 1000px;
+}
+
+.tile-face {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Tactile keycap styling */
+.keycap-btn {
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.12);
+  transition: all 0.08s ease-in-out;
+}
+
+.keycap-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.dark .keycap-btn {
+  box-shadow: 0 2.5px 0 0 rgba(0, 0, 0, 0.45);
+}
+
+.dark .keycap-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+/* Animations */
+@keyframes pop {
+  0% {
+    transform: scale(0.88);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes flipIn {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-6px);
+  }
+  40%, 80% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes winBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-pop {
+  animation: pop 0.14s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animate-flip {
+  animation: flipIn 0.5s ease-in-out;
+}
+
+.animate-shake {
+  animation: shake 0.45s ease-in-out;
+}
+
+.animate-win-bounce {
+  animation: winBounce 0.6s cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+
+/* Accessible reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
