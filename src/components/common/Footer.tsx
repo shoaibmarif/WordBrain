@@ -88,7 +88,7 @@ export const Footer: React.FC = () => {
                 onClick={() => navigateTo('#/about')}
                 className="hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer"
               >
-                About LexiQuest
+                About WordBrain
               </button>
             </li>
           </ul>

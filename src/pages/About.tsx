@@ -13,7 +13,7 @@ export const AboutPage: React.FC = () => {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       <SeoHead
         title={`About ${APP_NAME} (${APP_SUBTITLE}) - Free Browser Word Game`}
-        description="Learn about the origins, architecture, and technology behind the LexiQuest Word Guessing Game."
+        description="Learn about the origins, architecture, and technology behind the WordBrain Word Challenge."
         canonicalPath="/about"
       />
 

@@ -39,7 +39,7 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
     linkCanonical.setAttribute('href', `${APP_URL}${canonicalPath}`);
 
     // 4. Inject JSON-LD Structured Data
-    const scriptId = 'lexiquest-structured-data';
+    const scriptId = 'wordbrain-structured-data';
     let scriptTag = document.getElementById(scriptId) as HTMLScriptElement | null;
     if (!scriptTag) {
       scriptTag = document.createElement('script');

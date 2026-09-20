@@ -13,7 +13,7 @@ export const TermsPage: React.FC = () => {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       <SeoHead
         title={`Terms of Service - ${APP_NAME}`}
-        description="Terms of service and usage guidelines for playing the free browser-based LexiQuest Word Guessing Game."
+        description="Terms of service and usage guidelines for playing the free browser-based WordBrain Game."
         canonicalPath="/terms"
       />
 

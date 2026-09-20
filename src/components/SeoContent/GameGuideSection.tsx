@@ -10,7 +10,7 @@ export const GameGuideSection: React.FC = () => {
           Word Guessing Game Online
         </h2>
         <p className="text-sm sm:text-base">
-          Welcome to <strong>LexiQuest Word Guess</strong>, a polished and accessible browser-based word
+          Welcome to <strong>WordBrain</strong>, a polished and accessible browser-based word
           deduction game. Whether you are testing your daily vocabulary with our deterministic{' '}
           <strong>Daily Challenge</strong>, training with <strong>Practice Mode</strong> hints, or testing
           your reflexes in <strong>Timed Mode</strong>, the objective remains clear: deduce the mystery

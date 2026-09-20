@@ -22,7 +22,7 @@ export const ContactPage: React.FC = () => {
     <div className="max-w-xl mx-auto px-4 py-8 space-y-8">
       <SeoHead
         title={`Contact & Feedback - ${APP_NAME}`}
-        description="Have suggestions, questions, or dictionary word requests? Get in touch with the LexiQuest team."
+        description="Have suggestions, questions, or dictionary word requests? Get in touch with the WordBrain team."
         canonicalPath="/contact"
       />
 
