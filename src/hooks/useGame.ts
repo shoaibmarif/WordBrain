@@ -114,7 +114,7 @@ export function useGame({
     (char: string) => {
       if (gameStatus !== 'playing') return;
       if (currentGuess.length < config.wordLength) {
-        soundEngine.playKeypress();
+        soundEngine.playKeyClick();
         setCurrentGuess(prev => prev + char.toUpperCase());
       }
     },
@@ -124,7 +124,7 @@ export function useGame({
   const removeLetter = useCallback(() => {
     if (gameStatus !== 'playing') return;
     if (currentGuess.length > 0) {
-      soundEngine.playDelete();
+      soundEngine.playKeyClick();
       setCurrentGuess(prev => prev.slice(0, -1));
     }
   }, [gameStatus, currentGuess]);
@@ -135,30 +135,34 @@ export function useGame({
     // Length check
     if (currentGuess.length !== config.wordLength) {
       showToast('Not enough letters');
-      soundEngine.playInvalid();
+      soundEngine.playInvalidGuess();
       triggerShake();
       return;
     }
 
     // Basic validity
-    const basicValidation = validateWordBasic(currentGuess, config.wordLength, isAllowedWord);
+    const basicValidation = validateWordBasic(
+      currentGuess,
+      config.wordLength,
+      word => isAllowedWord(word, config.wordLength)
+    );
     if (!basicValidation.isValid) {
-      showToast(basicValidation.error || 'Word not in list');
-      soundEngine.playInvalid();
+      showToast(basicValidation.errorMessage || 'Word not in list');
+      soundEngine.playInvalidGuess();
       triggerShake();
       return;
     }
 
     // Hard mode checks
     if (hardMode && guesses.length > 0) {
-      const hardCheck = validateHardMode(
-        currentGuess,
-        guesses[guesses.length - 1],
-        evaluations[evaluations.length - 1]
-      );
+      const previousResults = guesses.map((guess, index) => ({
+        guess,
+        letters: evaluations[index],
+      }));
+      const hardCheck = validateHardMode(currentGuess, previousResults);
       if (!hardCheck.isValid) {
-        showToast(hardCheck.error || 'Must follow hard mode clues');
-        soundEngine.playInvalid();
+        showToast(hardCheck.errorMessage || 'Must follow hard mode clues');
+        soundEngine.playInvalidGuess();
         triggerShake();
         return;
       }
@@ -175,7 +179,7 @@ export function useGame({
 
     // Update keyboard states
     setKeyboardStates(prev => getUpdatedKeyboardStates(prev, newEval));
-    soundEngine.playReveal();
+    soundEngine.playTileFlip();
 
     const won = currentGuess === targetWord;
     const lost = !won && newGuesses.length >= config.maxAttempts;
@@ -254,26 +258,28 @@ export function useGame({
       if (gameStatus !== 'playing') return;
 
       if (hintType === 'reveal_letter') {
-        const hint = getRevealLetterHint(targetWord, guesses);
+        const hint = getRevealLetterHint(targetWord, evaluations);
         if (hint) {
+            const message = `${hint.char} is in position ${hint.position}`;
           setHintsUsed(prev => prev + 1);
-          setRevealedHint(hint.description);
-          showToast(hint.description, 3000);
+            setRevealedHint(message);
+            showToast(message, 3000);
         } else {
           showToast('No more letters to reveal');
         }
       } else if (hintType === 'eliminate_letters') {
         const hint = getEliminateLettersHint(targetWord, keyboardStates);
-        if (hint) {
+          if (hint.length > 0) {
+            const message = `${hint.join(', ')} ${hint.length === 1 ? 'is' : 'are'} not in the word`;
           setHintsUsed(prev => prev + 1);
-          setRevealedHint(hint.description);
-          showToast(hint.description, 3000);
+            setRevealedHint(message);
+            showToast(message, 3000);
         } else {
           showToast('No more letters to eliminate');
         }
       }
     },
-    [gameStatus, targetWord, guesses, keyboardStates, showToast]
+    [gameStatus, targetWord, evaluations, keyboardStates, showToast]
   );
 
   const restartGame = useCallback(() => {
