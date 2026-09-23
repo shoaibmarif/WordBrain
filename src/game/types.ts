@@ -4,7 +4,7 @@ export type CellState = LetterState | 'empty' | 'tbd';
 
 export type GameStatus = 'playing' | 'won' | 'lost' | 'paused';
 
-export type GameMode = 'daily' | 'random' | 'practice' | 'timed';
+export type GameMode = 'random' | 'practice' | 'timed';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -31,16 +31,6 @@ export interface GameStats {
   totalGuessesInWins: number;
   totalTimeSeconds: number;
   averageGuesses: number;
-}
-
-export interface DailyProgress {
-  date: string; // YYYY-MM-DD
-  completed: boolean;
-  won: boolean;
-  guesses: string[];
-  targetWord: string;
-  attemptsUsed: number;
-  durationSeconds: number;
 }
 
 export interface GameHistoryItem {

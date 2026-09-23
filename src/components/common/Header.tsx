@@ -64,27 +64,13 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             onClick={() => setMobileMenuOpen(prev => !prev)}
             aria-label="Toggle navigation menu"
-            className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="md:hidden p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
           {/* Desktop Mode Badges */}
           <nav className="hidden md:flex items-center gap-1 text-xs font-semibold p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
-            <button
-              onClick={() => {
-                onSelectMode('daily');
-                navigateTo('#/daily');
-              }}
-              className={`px-3 py-1.5 rounded-lg transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${
-                currentMode === 'daily'
-                  ? 'bg-emerald-600 text-white shadow-sm font-bold scale-[1.02]'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700/60'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              Daily
-            </button>
             <button
               onClick={() => {
                 onSelectMode('random');
@@ -246,27 +232,13 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => {
-                onSelectMode('daily');
-                navigateTo('#/daily');
-              }}
-              className={`p-2.5 rounded-xl text-left font-bold flex items-center gap-2 cursor-pointer transition-colors ${
-                currentMode === 'daily'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200'
-              }`}
-            >
-              <Calendar className="w-4 h-4" />
-              Daily Word
-            </button>
+          <div className="grid grid-cols-3 gap-2">
             <button
               onClick={() => {
                 onSelectMode('random');
                 navigateTo('#/');
               }}
-              className={`p-2.5 rounded-xl text-left font-bold flex items-center gap-2 cursor-pointer transition-colors ${
+              className={`p-2.5 rounded-xl text-center font-bold flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors ${
                 currentMode === 'random'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200'
@@ -280,7 +252,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onSelectMode('practice');
                 navigateTo('#/practice');
               }}
-              className={`p-2.5 rounded-xl text-left font-bold flex items-center gap-2 cursor-pointer transition-colors ${
+              className={`p-2.5 rounded-xl text-center font-bold flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors ${
                 currentMode === 'practice'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200'
@@ -294,7 +266,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onSelectMode('timed');
                 navigateTo('#/timed');
               }}
-              className={`p-2.5 rounded-xl text-left font-bold flex items-center gap-2 cursor-pointer transition-colors ${
+              className={`p-2.5 rounded-xl text-center font-bold flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors ${
                 currentMode === 'timed'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-slate-100 dark:bg-slate-800/80 text-slate-800 dark:text-slate-200'

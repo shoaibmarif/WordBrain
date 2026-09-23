@@ -54,7 +54,7 @@ export const AboutPage: React.FC = () => {
                 Zero Latency
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-400">
-                All game state, deterministic daily seed calculations, and dictionary validations happen
+                All game state, vocabulary evaluations, and dictionary validations happen
                 instantly in JavaScript without waiting on API calls.
               </p>
             </div>

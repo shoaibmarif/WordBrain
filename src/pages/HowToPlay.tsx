@@ -14,7 +14,7 @@ export const HowToPlayPage: React.FC = () => {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
       <SeoHead
         title={`How to Play ${APP_NAME} - Complete Rules & Visual Guide`}
-        description="Learn the official rules, letter feedback colors, and strategies for solving daily word guessing puzzles."
+        description="Learn the official rules, letter feedback colors, and strategies for solving word guessing puzzles."
         canonicalPath="/how-to-play"
       />
 

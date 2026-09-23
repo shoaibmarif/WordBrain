@@ -54,7 +54,6 @@ export const PrivacyPage: React.FC = () => {
           <ul className="list-disc list-inside text-xs sm:text-sm text-slate-600 dark:text-slate-400 pl-2 space-y-1">
             <li>User settings (theme, sound preference, high contrast, hard mode)</li>
             <li>Gameplay statistics (games played, win percentage, streak counter, guess distribution)</li>
-            <li>In-progress or completed daily challenge puzzle state</li>
             <li>Recent game history logs</li>
           </ul>
           <p className="text-xs text-slate-500 mt-2">
@@ -74,7 +73,7 @@ export const PrivacyPage: React.FC = () => {
         <section className="space-y-2">
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">4. Contact Information</h2>
           <p>
-            For questions or suggestions regarding our privacy practices, please contact us via our support page.
+            WordBrain operates strictly client-side on your device and does not collect or transmit any personal data.
           </p>
         </section>
       </div>

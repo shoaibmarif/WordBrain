@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
 import { GameHistoryItem, GameStats } from '../../game/types';
-import { DailyStreakData } from '../../hooks/useStatistics';
 import { Trash2, Flame, Trophy, Award, Clock } from 'lucide-react';
 
 interface StatisticsModalProps {
   isOpen: boolean;
   onClose: () => void;
   stats: GameStats;
-  dailyStreak: DailyStreakData;
   history: GameHistoryItem[];
   onResetStats: () => void;
   onClearHistory: () => void;
@@ -18,7 +16,6 @@ export const StatisticsModal: React.FC<StatisticsModalProps> = ({
   isOpen,
   onClose,
   stats,
-  dailyStreak,
   history,
   onResetStats,
   onClearHistory,
@@ -80,25 +77,6 @@ export const StatisticsModal: React.FC<StatisticsModalProps> = ({
                 {stats.maxStreak}
               </p>
               <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Best</p>
-            </div>
-          </div>
-
-          {/* Daily Streak Specific Info */}
-          <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-xl flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              <div>
-                <p className="font-bold text-slate-900 dark:text-slate-100">Daily Challenge Streak</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Consecutive daily wins</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-lg">
-                {dailyStreak.currentStreak}
-              </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
-                (Best: {dailyStreak.maxStreak})
-              </span>
             </div>
           </div>
 

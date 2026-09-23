@@ -1,7 +1,7 @@
 {
-  "name": "WordBrain - Daily Word Challenge",
+  "name": "WordBrain - Word Puzzle & Brain Gym",
   "short_name": "WordBrain",
-  "description": "Train your mind with WordBrain! Guess the hidden word in six attempts, challenge daily, random, practice, and timed modes, and track your streaks.",
+  "description": "Train your mind with WordBrain! Guess the hidden word in six attempts, play unlimited random, practice, and timed modes, and track your streaks.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#090d16",

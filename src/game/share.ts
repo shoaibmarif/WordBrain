@@ -3,7 +3,6 @@ import { APP_NAME } from '../utils/constants';
 
 export interface ShareOptions {
   mode: GameMode;
-  puzzleNumber?: number;
   wordLength: WordLength;
   maxAttempts: number;
   attemptsUsed: number;
@@ -43,7 +42,6 @@ export function generateEmojiGrid(
 export function buildShareText(options: ShareOptions): string {
   const {
     mode,
-    puzzleNumber,
     wordLength,
     maxAttempts,
     attemptsUsed,
@@ -54,14 +52,12 @@ export function buildShareText(options: ShareOptions): string {
   } = options;
 
   let header = APP_NAME;
-  if (mode === 'daily' && puzzleNumber) {
-    header += ` - Daily #${puzzleNumber}`;
-  } else if (mode === 'timed') {
+  if (mode === 'timed') {
     header += ` - Timed Mode (${wordLength} letters)`;
   } else if (mode === 'practice') {
     header += ` - Practice (${wordLength} letters)`;
   } else {
-    header += ` - Random (${wordLength} letters)`;
+    header += ` (${wordLength} letters)`;
   }
 
   const score = `${won ? attemptsUsed : 'X'}/${maxAttempts}${hardMode ? '*' : ''}`;

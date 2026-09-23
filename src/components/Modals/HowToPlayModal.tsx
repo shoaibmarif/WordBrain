@@ -77,12 +77,12 @@ export const HowToPlayModal: React.FC<HowToPlayModalProps> = ({
           </div>
         </div>
 
-        {/* Daily Challenge Note */}
+        {/* Unlimited Puzzles Note */}
         <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/50 text-xs">
           <strong className="text-emerald-700 dark:text-emerald-300 block mb-0.5">
-            Daily Challenge
+            Unlimited Play
           </strong>
-          A new mystery puzzle is released every midnight. Everyone gets the exact same word each day!
+          Play as many puzzles as you like! Switch word lengths (5 to 8 letters), use Practice hints, or test your speed in Timed mode.
         </div>
       </div>
     </Modal>

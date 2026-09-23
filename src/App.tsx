@@ -12,7 +12,6 @@ import { HowToPlayModal } from './components/Modals/HowToPlayModal';
 
 // Pages
 import { HomePage } from './pages/Home';
-import { DailyPage } from './pages/Daily';
 import { PracticePage } from './pages/Practice';
 import { TimedPage } from './pages/Timed';
 import { HowToPlayPage } from './pages/HowToPlay';
@@ -20,7 +19,6 @@ import { StrategiesPage } from './pages/Strategies';
 import { AboutPage } from './pages/About';
 import { PrivacyPage } from './pages/Privacy';
 import { TermsPage } from './pages/Terms';
-import { ContactPage } from './pages/Contact';
 
 export const App: React.FC = () => {
   const { theme, setTheme, isDark, toggleTheme } = useTheme();
@@ -52,7 +50,7 @@ export const App: React.FC = () => {
   );
 
   // Statistics
-  const { stats, dailyStreak, history, recordGameResult, resetStats, clearHistory } =
+  const { stats, streak, history, recordGameResult, resetStats, clearHistory } =
     useStatistics();
 
   // Modals state
@@ -86,7 +84,6 @@ export const App: React.FC = () => {
 
   // Determine current active mode based on route
   const getModeFromPath = (): GameMode => {
-    if (currentPath.startsWith('#/daily')) return 'daily';
     if (currentPath.startsWith('#/practice')) return 'practice';
     if (currentPath.startsWith('#/timed')) return 'timed';
     return 'random';
@@ -95,9 +92,7 @@ export const App: React.FC = () => {
   const currentMode = getModeFromPath();
 
   const handleSelectMode = (newMode: GameMode) => {
-    if (newMode === 'daily') {
-      window.location.hash = '#/daily';
-    } else if (newMode === 'practice') {
+    if (newMode === 'practice') {
       window.location.hash = '#/practice';
     } else if (newMode === 'timed') {
       window.location.hash = '#/timed';
@@ -119,15 +114,12 @@ export const App: React.FC = () => {
     onOpenStats: () => setStatsModalOpen(true),
     onOpenSettings: () => setSettingsModalOpen(true),
     onOpenHelp: () => setHowToPlayModalOpen(true),
-    dailyStreak,
+    streak,
     onGameEnd: recordGameResult,
   };
 
   // Render current page
   const renderCurrentPage = () => {
-    if (currentPath.startsWith('#/daily')) {
-      return <DailyPage {...gameProps} />;
-    }
     if (currentPath.startsWith('#/practice')) {
       return <PracticePage {...gameProps} />;
     }
@@ -148,9 +140,6 @@ export const App: React.FC = () => {
     }
     if (currentPath.startsWith('#/terms')) {
       return <TermsPage />;
-    }
-    if (currentPath.startsWith('#/contact')) {
-      return <ContactPage />;
     }
     return <HomePage {...gameProps} />;
   };
@@ -179,7 +168,6 @@ export const App: React.FC = () => {
         isOpen={statsModalOpen}
         onClose={() => setStatsModalOpen(false)}
         stats={stats}
-        dailyStreak={dailyStreak}
         history={history}
         onResetStats={resetStats}
         onClearHistory={clearHistory}

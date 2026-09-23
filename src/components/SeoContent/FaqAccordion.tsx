@@ -38,19 +38,14 @@ export const FAQS_DATA = [
       'Yes, the application is mobile-first, supporting responsive touch keyboards, adaptive sizing, and smooth performance on iOS, Android, tablets, and desktops.',
   },
   {
-    question: 'What is the Daily Challenge?',
+    question: 'Can I play unlimited games?',
     answer:
-      'The Daily Challenge features one official puzzle per calendar day. Every player around the world receives the exact same word based on deterministic date calculation. A new puzzle resets every local midnight.',
+      'Yes! WordBrain allows you to play unlimited puzzles with no daily limits or restrictions. You can play Random mode, practice with hints, or race against the clock in Timed mode anytime.',
   },
   {
-    question: 'Can I play unlimited practice games?',
+    question: 'Are my game statistics and streaks saved?',
     answer:
-      'Yes! Practice Mode and Random Game modes allow you to play as many puzzles as you like without daily restrictions, with optional vocabulary hints in Practice Mode.',
-  },
-  {
-    question: 'Can I share my results without spoiling the answer?',
-    answer:
-      'Yes! When you complete a game, tap "Share Result" to generate a spoiler-free emoji grid depicting your guess patterns without showing any letters.',
+      'Yes, all your game statistics, win streaks, and recent puzzle history are securely saved in your browser localStorage. No data is sent to external servers.',
   },
 ];
 

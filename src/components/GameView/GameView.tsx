@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GameMode, HintType, ThemeMode, WordLength, Difficulty } from '../../game/types';
+import { GameMode, WordLength, Difficulty } from '../../game/types';
 import { useGame } from '../../hooks/useGame';
 import { useKeyboard } from '../../hooks/useKeyboard';
 import { useTimer } from '../../hooks/useTimer';
@@ -8,20 +8,16 @@ import { VirtualKeyboard } from '../Keyboard/VirtualKeyboard';
 import { Toast } from '../common/Toast';
 import { ResultModal } from '../Modals/ResultModal';
 import { HintModal } from '../Modals/HintModal';
-import { getDailyPuzzleNumber } from '../../game/dailyPuzzle';
 import { GameGuideSection } from '../SeoContent/GameGuideSection';
 import { FaqAccordion } from '../SeoContent/FaqAccordion';
 import {
-  Calendar,
   RotateCcw,
   Sparkles,
   Lightbulb,
   Pause,
   Play,
   Flame,
-  Award,
   Clock,
-  Layers,
 } from 'lucide-react';
 
 interface GameViewProps {
@@ -37,7 +33,7 @@ interface GameViewProps {
   onOpenStats: () => void;
   onOpenSettings: () => void;
   onOpenHelp: () => void;
-  dailyStreak: { currentStreak: number; maxStreak: number };
+  streak: { currentStreak: number; maxStreak: number };
   onGameEnd: (params: {
     mode: GameMode;
     wordLength: WordLength;
@@ -64,7 +60,7 @@ export const GameView: React.FC<GameViewProps> = ({
   onOpenStats,
   onOpenSettings,
   onOpenHelp,
-  dailyStreak,
+  streak,
   onGameEnd,
 }) => {
   const [hintModalOpen, setHintModalOpen] = useState(false);
@@ -82,7 +78,6 @@ export const GameView: React.FC<GameViewProps> = ({
     toastMessage,
     isShaking,
     hintsUsed,
-    dailyCompleted,
     addLetter,
     removeLetter,
     submitGuess,
@@ -92,11 +87,10 @@ export const GameView: React.FC<GameViewProps> = ({
     changeMode,
     changeWordLength,
     changeDifficulty,
-    setGameStatus,
   } = useGame({
     initialConfig: {
       mode,
-      wordLength: mode === 'daily' ? 5 : propWordLength,
+      wordLength: propWordLength,
       difficulty,
     },
     hardMode,
@@ -108,16 +102,14 @@ export const GameView: React.FC<GameViewProps> = ({
     },
   });
 
-  // Sync mode and wordLength if props change
+  // Sync mode, wordLength, and difficulty if props change
   useEffect(() => {
     changeMode(mode);
   }, [mode, changeMode]);
 
   useEffect(() => {
-    if (mode !== 'daily') {
-      changeWordLength(propWordLength);
-    }
-  }, [propWordLength, mode, changeWordLength]);
+    changeWordLength(propWordLength);
+  }, [propWordLength, changeWordLength]);
 
   useEffect(() => {
     changeDifficulty(difficulty);
@@ -146,7 +138,6 @@ export const GameView: React.FC<GameViewProps> = ({
   });
 
   const isModalOpen = resultModalOpen || hintModalOpen;
-  const puzzleNum = mode === 'daily' ? getDailyPuzzleNumber() : null;
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -155,20 +146,13 @@ export const GameView: React.FC<GameViewProps> = ({
 
       {/* Sub-header status bar */}
       <div className="w-full max-w-lg px-3 pt-3 pb-2 flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
-        {/* Mode / Puzzle badge */}
+        {/* Mode badge & word length buttons */}
         <div className="flex items-center gap-2">
-          {mode === 'daily' && (
-            <div className="flex items-center gap-1.5 font-extrabold text-emerald-700 dark:text-emerald-300 bg-emerald-100/70 dark:bg-emerald-950/70 px-3 py-1.5 rounded-full border border-emerald-300/60 dark:border-emerald-800/80 shadow-xs">
-              <Calendar className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Daily #{puzzleNum}</span>
-            </div>
-          )}
           {mode === 'random' && (
             <div className="flex items-center gap-2 bg-slate-100/90 dark:bg-slate-800/70 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-xs">
               <span className="font-extrabold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">
-                Random
+                Word Length
               </span>
-              {/* Quick Length Dropdown / Pill */}
               <div className="flex gap-1">
                 {([5, 6, 7, 8] as WordLength[]).map(len => (
                   <button
@@ -204,14 +188,16 @@ export const GameView: React.FC<GameViewProps> = ({
           )}
         </div>
 
-        {/* Right Status (Streak, Timer, or Hints) */}
+        {/* Right Status (Streak, Timer, Hints, New Game) */}
         <div className="flex items-center gap-2">
-          {mode === 'daily' && (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-600 dark:text-amber-400 font-extrabold shadow-xs" title="Current Daily Streak">
-              <Flame className="w-4 h-4 fill-current" />
-              <span>{dailyStreak.currentStreak} Streak</span>
-            </div>
-          )}
+          {/* Win streak badge */}
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 rounded-full text-amber-600 dark:text-amber-400 font-extrabold shadow-xs"
+            title="Current Win Streak"
+          >
+            <Flame className="w-4 h-4 fill-current" />
+            <span>{streak.currentStreak} Streak</span>
+          </div>
 
           {mode === 'practice' && (
             <button
@@ -225,7 +211,13 @@ export const GameView: React.FC<GameViewProps> = ({
 
           {mode === 'timed' && (
             <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl font-mono font-bold border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span className={seconds < 30 ? 'text-rose-500 animate-pulse font-black' : 'text-slate-800 dark:text-slate-100'}>
+              <span
+                className={
+                  seconds < 30
+                    ? 'text-rose-500 animate-pulse font-black'
+                    : 'text-slate-800 dark:text-slate-100'
+                }
+              >
                 {formattedTime}
               </span>
               {togglePause && (
@@ -239,19 +231,17 @@ export const GameView: React.FC<GameViewProps> = ({
             </div>
           )}
 
-          {/* Reset / Play Again button for random/practice */}
-          {mode !== 'daily' && (
-            <button
-              onClick={() => {
-                restartGame();
-                resetTimer();
-              }}
-              title="New Random Puzzle"
-              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 cursor-pointer transition-all active:scale-95 shadow-xs"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-          )}
+          {/* New Game / Restart button */}
+          <button
+            onClick={() => {
+              restartGame();
+              resetTimer();
+            }}
+            title="New Puzzle"
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 cursor-pointer transition-all active:scale-95 shadow-xs"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
         </div>
       </div>
 

@@ -16,7 +16,7 @@ interface PracticePageProps {
   onOpenStats: () => void;
   onOpenSettings: () => void;
   onOpenHelp: () => void;
-  dailyStreak: { currentStreak: number; maxStreak: number };
+  streak: { currentStreak: number; maxStreak: number };
   onGameEnd: (params: {
     mode: GameMode;
     wordLength: WordLength;

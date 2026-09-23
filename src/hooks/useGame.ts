@@ -11,7 +11,6 @@ import {
 } from '../game/types';
 import { evaluateGuess, getUpdatedKeyboardStates } from '../game/wordEvaluation';
 import { validateHardMode, validateWordBasic } from '../game/wordValidation';
-import { getDailyWord, getLocalDateString } from '../game/dailyPuzzle';
 import {
   filterWordsByDifficulty,
   getRandomWord,
@@ -20,7 +19,6 @@ import {
 } from '../game/difficulty';
 import { getSolutionsForLength, isAllowedWord } from '../data';
 import { soundEngine } from '../game/soundEngine';
-import { STORAGE_KEYS } from '../utils/constants';
 import confetti from 'canvas-confetti';
 
 interface UseGameProps {
@@ -63,7 +61,6 @@ export function useGame({
   const [isShaking, setIsShaking] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [revealedHint, setRevealedHint] = useState<string | null>(null);
-  const [dailyCompleted, setDailyCompleted] = useState(false);
 
   const startTimeRef = useRef<number>(Date.now());
   const toastTimeoutRef = useRef<number | null>(null);
@@ -73,8 +70,10 @@ export function useGame({
     soundEngine.setEnabled(soundEnabled);
   }, [soundEnabled]);
 
-  const showToast = useCallback((msg: string, duration = 2000) => {
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+  const showToast = useCallback((msg: string, duration = 1800) => {
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
     setToastMessage(msg);
     toastTimeoutRef.current = window.setTimeout(() => {
       setToastMessage(null);
@@ -86,147 +85,101 @@ export function useGame({
     setTimeout(() => setIsShaking(false), 600);
   }, []);
 
-  // Initialize word according to mode
+  // Initialize word
   const initGame = useCallback(
     (cfg: GameConfig) => {
-      const todayStr = getLocalDateString();
       const allSolutions = getSolutionsForLength(cfg.wordLength);
-
-      let target = '';
-      let initialGuesses: string[] = [];
-      let initialEvals: LetterEvaluation[][] = [];
-      let initialKeyStates: Record<string, LetterState> = {};
-      let initialStatus: GameStatus = 'playing';
-      let isDailyDone = false;
-
-      if (cfg.mode === 'daily') {
-        // Daily challenge is strictly 5 letters
-        const dailySolutions = getSolutionsForLength(5);
-        target = getDailyWord(todayStr, dailySolutions);
-
-        // Check if previously played today
-        try {
-          const savedDaily = localStorage.getItem(`${STORAGE_KEYS.DAILY_STATE}_${todayStr}`);
-          if (savedDaily) {
-            const data = JSON.parse(savedDaily);
-            initialGuesses = data.guesses || [];
-            initialEvals = initialGuesses.map(g => evaluateGuess(g, target));
-            initialKeyStates = {};
-            initialEvals.forEach(ev => {
-              initialKeyStates = getUpdatedKeyboardStates(initialKeyStates, ev);
-            });
-            initialStatus = data.status || 'playing';
-            isDailyDone = data.status === 'won' || data.status === 'lost';
-          }
-        } catch {
-          // ignore corrupted localstorage
-        }
-      } else {
-        // Random / Practice / Timed
-        const filtered = filterWordsByDifficulty(allSolutions, cfg.difficulty);
-        target = getRandomWord(filtered.length > 0 ? filtered : allSolutions);
-      }
+      const filtered = filterWordsByDifficulty(allSolutions, cfg.difficulty);
+      const target = getRandomWord(filtered.length > 0 ? filtered : allSolutions);
 
       setTargetWord(target);
-      setGuesses(initialGuesses);
-      setEvaluations(initialEvals);
+      setGuesses([]);
+      setEvaluations([]);
       setCurrentGuess('');
-      setKeyboardStates(initialKeyStates);
-      setGameStatus(initialStatus);
+      setKeyboardStates({});
+      setGameStatus('playing');
       setHintsUsed(0);
       setRevealedHint(null);
-      setDailyCompleted(isDailyDone);
       startTimeRef.current = Date.now();
     },
     []
   );
 
-  // Initialize or re-initialize when mode or wordLength changes
+  // Initialize or re-initialize when mode, wordLength, or difficulty changes
   useEffect(() => {
     initGame(config);
-  }, [config.mode, config.wordLength, config.difficulty, initGame]);
+  }, [config.wordLength, config.mode, config.difficulty, initGame]);
 
-  // Input actions
   const addLetter = useCallback(
     (char: string) => {
       if (gameStatus !== 'playing') return;
-      if (currentGuess.length >= config.wordLength) return;
-
-      const upper = char.toUpperCase();
-      if (/^[A-Z]$/.test(upper)) {
-        setCurrentGuess(prev => prev + upper);
-        soundEngine.playKeyClick();
+      if (currentGuess.length < config.wordLength) {
+        soundEngine.playKeypress();
+        setCurrentGuess(prev => prev + char.toUpperCase());
       }
     },
-    [gameStatus, currentGuess.length, config.wordLength]
+    [gameStatus, currentGuess, config.wordLength]
   );
 
   const removeLetter = useCallback(() => {
     if (gameStatus !== 'playing') return;
     if (currentGuess.length > 0) {
+      soundEngine.playDelete();
       setCurrentGuess(prev => prev.slice(0, -1));
-      soundEngine.playKeyClick();
     }
-  }, [gameStatus, currentGuess.length]);
+  }, [gameStatus, currentGuess]);
 
   const submitGuess = useCallback(() => {
     if (gameStatus !== 'playing') return;
 
-    // 1. Length check
-    if (currentGuess.length < config.wordLength) {
+    // Length check
+    if (currentGuess.length !== config.wordLength) {
       showToast('Not enough letters');
+      soundEngine.playInvalid();
       triggerShake();
-      soundEngine.playInvalidGuess();
       return;
     }
 
-    // 2. Dictionary validity check
-    const basicValidation = validateWordBasic(
-      currentGuess,
-      config.wordLength,
-      w => isAllowedWord(w, config.wordLength)
-    );
-
+    // Basic validity
+    const basicValidation = validateWordBasic(currentGuess, config.wordLength, isAllowedWord);
     if (!basicValidation.isValid) {
-      showToast(basicValidation.errorMessage || 'Not in word list');
+      showToast(basicValidation.error || 'Word not in list');
+      soundEngine.playInvalid();
       triggerShake();
-      soundEngine.playInvalidGuess();
       return;
     }
 
-    // 3. Hard mode validation
+    // Hard mode checks
     if (hardMode && guesses.length > 0) {
-      const prevResults = guesses.map((g, idx) => ({
-        guess: g,
-        letters: evaluations[idx],
-      }));
-
-      const hardModeValidation = validateHardMode(currentGuess, prevResults);
-      if (!hardModeValidation.isValid) {
-        showToast(hardModeValidation.errorMessage || 'Hard mode constraint violated');
+      const hardCheck = validateHardMode(
+        currentGuess,
+        guesses[guesses.length - 1],
+        evaluations[evaluations.length - 1]
+      );
+      if (!hardCheck.isValid) {
+        showToast(hardCheck.error || 'Must follow hard mode clues');
+        soundEngine.playInvalid();
         triggerShake();
-        soundEngine.playInvalidGuess();
         return;
       }
     }
 
-    // 4. Evaluate guess
-    const newEvaluation = evaluateGuess(currentGuess, targetWord);
-    const newEvaluations = [...evaluations, newEvaluation];
+    // Evaluate guess
+    const newEval = evaluateGuess(currentGuess, targetWord);
     const newGuesses = [...guesses, currentGuess];
-    const newKeyboardStates = getUpdatedKeyboardStates(keyboardStates, newEvaluation);
+    const newEvaluations = [...evaluations, newEval];
 
-    // Audio feedback for row flip
-    soundEngine.playTileFlip(guesses.length);
-
-    setEvaluations(newEvaluations);
     setGuesses(newGuesses);
-    setKeyboardStates(newKeyboardStates);
+    setEvaluations(newEvaluations);
     setCurrentGuess('');
+
+    // Update keyboard states
+    setKeyboardStates(prev => getUpdatedKeyboardStates(prev, newEval));
+    soundEngine.playReveal();
 
     const won = currentGuess === targetWord;
     const lost = !won && newGuesses.length >= config.maxAttempts;
-    const durationSeconds = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000));
+    const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
 
     if (won) {
       setGameStatus('won');
@@ -236,14 +189,6 @@ export function useGame({
         spread: 70,
         origin: { y: 0.6 },
       });
-      if (config.mode === 'daily') {
-        setDailyCompleted(true);
-        const todayStr = getLocalDateString();
-        localStorage.setItem(
-          `${STORAGE_KEYS.DAILY_STATE}_${todayStr}`,
-          JSON.stringify({ status: 'won', guesses: newGuesses })
-        );
-      }
       onGameEnd?.({
         mode: config.mode,
         wordLength: config.wordLength,
@@ -258,14 +203,6 @@ export function useGame({
     } else if (lost) {
       setGameStatus('lost');
       soundEngine.playDefeat();
-      if (config.mode === 'daily') {
-        setDailyCompleted(true);
-        const todayStr = getLocalDateString();
-        localStorage.setItem(
-          `${STORAGE_KEYS.DAILY_STATE}_${todayStr}`,
-          JSON.stringify({ status: 'lost', guesses: newGuesses })
-        );
-      }
       onGameEnd?.({
         mode: config.mode,
         wordLength: config.wordLength,
@@ -277,15 +214,6 @@ export function useGame({
         durationSeconds,
         hintsUsed,
       });
-    } else {
-      // In-progress daily save
-      if (config.mode === 'daily') {
-        const todayStr = getLocalDateString();
-        localStorage.setItem(
-          `${STORAGE_KEYS.DAILY_STATE}_${todayStr}`,
-          JSON.stringify({ status: 'playing', guesses: newGuesses })
-        );
-      }
     }
   }, [
     gameStatus,
@@ -295,68 +223,57 @@ export function useGame({
     guesses,
     evaluations,
     targetWord,
-    keyboardStates,
     hintsUsed,
     showToast,
     triggerShake,
     onGameEnd,
   ]);
 
-  // Timed mode expiry
   const handleTimeUp = useCallback(() => {
-    if (gameStatus === 'playing') {
-      setGameStatus('lost');
-      soundEngine.playDefeat();
-      showToast("Time's up!", 3000);
-      const durationSeconds = Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000));
-      onGameEnd?.({
-        mode: config.mode,
-        wordLength: config.wordLength,
-        targetWord,
-        guesses,
-        won: false,
-        attemptsUsed: guesses.length,
-        maxAttempts: config.maxAttempts,
-        durationSeconds,
-        hintsUsed,
-      });
-    }
+    if (gameStatus !== 'playing') return;
+    setGameStatus('lost');
+    soundEngine.playDefeat();
+    showToast(`Time's up! Word was ${targetWord}`, 3000);
+    const durationSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+    onGameEnd?.({
+      mode: config.mode,
+      wordLength: config.wordLength,
+      targetWord,
+      guesses,
+      won: false,
+      attemptsUsed: guesses.length,
+      maxAttempts: config.maxAttempts,
+      durationSeconds,
+      hintsUsed,
+    });
   }, [gameStatus, config, targetWord, guesses, hintsUsed, showToast, onGameEnd]);
 
-  // Practice mode hints
+  // Hints (for Practice mode)
   const useHint = useCallback(
-    (type: HintType) => {
-      if (config.mode !== 'practice' || gameStatus !== 'playing') return;
+    (hintType: HintType) => {
+      if (gameStatus !== 'playing') return;
 
-      if (type === 'reveal_letter') {
-        const hint = getRevealLetterHint(targetWord, evaluations);
+      if (hintType === 'reveal_letter') {
+        const hint = getRevealLetterHint(targetWord, guesses);
         if (hint) {
-          setHintsUsed(h => h + 1);
-          setRevealedHint(`Hint: Letter "${hint.char}" is at position ${hint.position}`);
-          showToast(`Position ${hint.position} contains "${hint.char}"`, 3500);
+          setHintsUsed(prev => prev + 1);
+          setRevealedHint(hint.description);
+          showToast(hint.description, 3000);
         } else {
-          showToast('All letters already revealed!');
+          showToast('No more letters to reveal');
         }
-      } else if (type === 'eliminate_letters') {
-        const eliminated = getEliminateLettersHint(targetWord, keyboardStates, 3);
-        if (eliminated.length > 0) {
-          setHintsUsed(h => h + 1);
-          // Mark these letters as absent on the keyboard
-          setKeyboardStates(prev => {
-            const next = { ...prev };
-            eliminated.forEach(c => {
-              if (!next[c]) next[c] = 'absent';
-            });
-            return next;
-          });
-          setRevealedHint(`Eliminated unused letters: ${eliminated.join(', ')}`);
-          showToast(`Eliminated: ${eliminated.join(', ')}`, 3500);
+      } else if (hintType === 'eliminate_letters') {
+        const hint = getEliminateLettersHint(targetWord, keyboardStates);
+        if (hint) {
+          setHintsUsed(prev => prev + 1);
+          setRevealedHint(hint.description);
+          showToast(hint.description, 3000);
         } else {
-          showToast('No more letters to eliminate!');
+          showToast('No more letters to eliminate');
         }
       }
     },
-    [config.mode, gameStatus, targetWord, evaluations, keyboardStates, showToast]
+    [gameStatus, targetWord, guesses, keyboardStates, showToast]
   );
 
   const restartGame = useCallback(() => {
@@ -367,7 +284,6 @@ export function useGame({
     setConfig(prev => ({
       ...prev,
       mode: newMode,
-      wordLength: newMode === 'daily' ? 5 : prev.wordLength,
     }));
   }, []);
 
@@ -397,7 +313,6 @@ export function useGame({
     isShaking,
     hintsUsed,
     revealedHint,
-    dailyCompleted,
     addLetter,
     removeLetter,
     submitGuess,
