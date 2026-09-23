@@ -1,13 +1,11 @@
 import React from 'react';
 import { Modal } from '../common/Modal';
-import { Difficulty, ThemeMode, WordLength } from '../../game/types';
-import { Volume2, VolumeX, Eye, Moon, Sun, Monitor, Sparkles, Palette, Check } from 'lucide-react';
+import { Difficulty, WordLength } from '../../game/types';
+import { Volume2, VolumeX, Eye, Sparkles } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  theme: ThemeMode;
-  onThemeChange: (t: ThemeMode) => void;
   hardMode: boolean;
   onHardModeToggle: () => void;
   soundEnabled: boolean;
@@ -26,8 +24,6 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
-  theme,
-  onThemeChange,
   hardMode,
   onHardModeToggle,
   soundEnabled,
@@ -45,75 +41,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Game Settings & Appearance" maxWidthClass="max-w-md">
       <div className="space-y-6 text-sm">
-        {/* Visual Theme / Template Selection */}
-        <div>
-          <div className="flex items-center gap-2 mb-2.5">
-            <Palette className="w-4 h-4 text-emerald-500" />
-            <p className="font-bold text-slate-900 dark:text-slate-100">Theme Template</p>
-          </div>
-          <div className="grid grid-cols-3 gap-2.5">
-            {/* Light Template Card */}
-            <button
-              type="button"
-              onClick={() => onThemeChange('light')}
-              className={`p-3 rounded-xl border-2 text-left cursor-pointer transition-all ${
-                theme === 'light'
-                  ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
-                  : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="p-1 rounded-md bg-amber-100 text-amber-600">
-                  <Sun className="w-4 h-4" />
-                </div>
-                {theme === 'light' && <Check className="w-3.5 h-3.5 text-emerald-600 font-bold" />}
-              </div>
-              <p className="font-bold text-slate-900 dark:text-white text-xs">Light</p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Crisp & Clean</p>
-            </button>
-
-            {/* Dark Template Card */}
-            <button
-              type="button"
-              onClick={() => onThemeChange('dark')}
-              className={`p-3 rounded-xl border-2 text-left cursor-pointer transition-all ${
-                theme === 'dark'
-                  ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
-                  : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="p-1 rounded-md bg-indigo-900/40 text-indigo-400">
-                  <Moon className="w-4 h-4" />
-                </div>
-                {theme === 'dark' && <Check className="w-3.5 h-3.5 text-emerald-500 font-bold" />}
-              </div>
-              <p className="font-bold text-slate-900 dark:text-white text-xs">Dark</p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Deep Obsidian</p>
-            </button>
-
-            {/* System Card */}
-            <button
-              type="button"
-              onClick={() => onThemeChange('system')}
-              className={`p-3 rounded-xl border-2 text-left cursor-pointer transition-all ${
-                theme === 'system'
-                  ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 ring-2 ring-emerald-500/20'
-                  : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="p-1 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                  <Monitor className="w-4 h-4" />
-                </div>
-                {theme === 'system' && <Check className="w-3.5 h-3.5 text-emerald-500 font-bold" />}
-              </div>
-              <p className="font-bold text-slate-900 dark:text-white text-xs">System</p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Auto Detect</p>
-            </button>
-          </div>
-        </div>
-
         {/* Hard Mode */}
         <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800">
           <div className="pr-4">

@@ -14,8 +14,6 @@ import {
   Timer as TimerIcon,
   Pause,
   Play,
-  Sun,
-  Moon,
   Brain,
 } from 'lucide-react';
 
@@ -30,8 +28,6 @@ interface HeaderProps {
   isPaused?: boolean;
   onTogglePause?: () => void;
   formattedTime?: string;
-  isDark?: boolean;
-  onToggleTheme?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -45,8 +41,6 @@ export const Header: React.FC<HeaderProps> = ({
   isPaused = false,
   onTogglePause,
   formattedTime,
-  isDark = false,
-  onToggleTheme,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -168,19 +162,6 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
-          {/* 1-Click Quick Theme Switcher (Light / Dark) */}
-          {onToggleTheme && (
-            <button
-              type="button"
-              onClick={onToggleTheme}
-              aria-label={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-              title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-              className="p-1.5 sm:p-2 rounded-lg text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-            >
-              {isDark ? <Sun className="w-5 h-5 transition-transform hover:rotate-45" /> : <Moon className="w-5 h-5 transition-transform hover:-rotate-12" />}
-            </button>
-          )}
-
           {/* How to Play */}
           <button
             type="button"
@@ -221,15 +202,6 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c121e] px-4 py-3 space-y-3 text-sm shadow-xl">
           <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Game Modes</p>
-            {onToggleTheme && (
-              <button
-                onClick={onToggleTheme}
-                className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
-              >
-                {isDark ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
-                <span>{isDark ? 'Light Theme' : 'Dark Theme'}</span>
-              </button>
-            )}
           </div>
 
           <div className="grid grid-cols-3 gap-2">

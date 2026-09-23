@@ -21,7 +21,7 @@ import { PrivacyPage } from './pages/Privacy';
 import { TermsPage } from './pages/Terms';
 
 export const App: React.FC = () => {
-  const { theme, setTheme, isDark, toggleTheme } = useTheme();
+  useTheme();
 
   // Settings
   const [hardMode, setHardMode] = useLocalStorage<boolean>(
@@ -153,8 +153,6 @@ export const App: React.FC = () => {
         onOpenHelp={() => setHowToPlayModalOpen(true)}
         onOpenStats={() => setStatsModalOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
       />
 
       {/* Main Page Area */}
@@ -176,8 +174,6 @@ export const App: React.FC = () => {
       <SettingsModal
         isOpen={settingsModalOpen}
         onClose={() => setSettingsModalOpen(false)}
-        theme={theme}
-        onThemeChange={setTheme}
         hardMode={hardMode}
         onHardModeToggle={() => setHardMode(prev => !prev)}
         soundEnabled={soundEnabled}
