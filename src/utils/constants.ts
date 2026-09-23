@@ -23,5 +23,5 @@ export const STORAGE_KEYS = {
 export const DEVELOPER_LINKS = {
   GITHUB: 'https://github.com/shoaibmarif',
   LINKEDIN: 'https://www.linkedin.com/in/shoaibmarif/',
-  PORTFOLIO: 'https://github.com/shoaibmarif',
+  PORTFOLIO: 'https://shoaibarif.vercel.app/',
 };
