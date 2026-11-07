@@ -71,7 +71,9 @@ export const GameView: React.FC<GameViewProps> = ({ mode, fixedLength, daily, ti
   });
 
   // A fresh word always starts unpaused.
-  useEffect(() => setPaused(false), [game.targetWord]);
+  useEffect(() => {
+    setPaused(false);
+  }, [game.targetWord]);
 
   useKeyboard({
     onChar: game.addLetter,

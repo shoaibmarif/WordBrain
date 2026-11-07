@@ -13,7 +13,9 @@ export const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
-  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `relative px-1 py-1 text-[15px] font-medium transition-colors ${

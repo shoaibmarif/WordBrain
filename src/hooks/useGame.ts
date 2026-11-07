@@ -69,7 +69,9 @@ export function useGame({
   const initialGuessesRef = useRef(initialGuesses);
   initialGuessesRef.current = initialGuesses;
 
-  useEffect(() => soundEngine.setEnabled(soundEnabled), [soundEnabled]);
+  useEffect(() => {
+    soundEngine.setEnabled(soundEnabled);
+  }, [soundEnabled]);
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
 
   // Pull in the full dictionary for this length in the background.
