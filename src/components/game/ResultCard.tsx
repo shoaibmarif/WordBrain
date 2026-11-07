@@ -63,7 +63,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({
   const heading = won ? WIN_LINES[Math.min(attempts, 6) - 1] : mode === 'timed' && attempts < maxAttempts ? 'Out of time' : 'Not this time';
 
   return (
-    <div ref={ref} className="animate-modal-in mx-auto w-full max-w-[34rem] rounded-xl border-2 border-ink bg-paper p-5 sm:p-6" role="status">
+    <div ref={ref} className={`animate-modal-in mx-auto w-full max-w-[34rem] rounded-2xl p-5 sm:p-6 ${won ? 'bg-hit-soft' : 'bg-accent-soft'}`} role="status">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="eyebrow">{won ? `Solved in ${attempts} of ${maxAttempts}` : 'The word was'}</p>
@@ -88,7 +88,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({
       </div>
 
       {mode === 'daily' && (
-        <div className="mt-5 flex items-center justify-between rounded-lg border-2 border-dashed border-line px-4 py-3">
+        <div className="mt-5 flex items-center justify-between rounded-lg bg-card/70 px-4 py-3">
           <span className="text-sm text-ink-2">Next puzzle in</span>
           <Countdown />
         </div>

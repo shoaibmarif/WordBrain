@@ -59,6 +59,10 @@
       "destination": "/strategies.html"
     },
     {
+      "source": "/starting-words",
+      "destination": "/starting-words.html"
+    },
+    {
       "source": "/faq",
       "destination": "/faq.html"
     },

@@ -10,6 +10,7 @@ const Timed = lazy(() => import('./pages/Timed').then((m) => ({ default: m.Timed
 const LengthPage = lazy(() => import('./pages/LengthPage').then((m) => ({ default: m.LengthPage })));
 const HowToPlay = lazy(() => import('./pages/HowToPlay').then((m) => ({ default: m.HowToPlay })));
 const Strategies = lazy(() => import('./pages/Strategies').then((m) => ({ default: m.Strategies })));
+const StartingWords = lazy(() => import('./pages/StartingWords').then((m) => ({ default: m.StartingWords })));
 const Faq = lazy(() => import('./pages/Faq').then((m) => ({ default: m.Faq })));
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })));
 const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })));
@@ -40,6 +41,7 @@ export const App: React.FC = () => (
         ))}
         <Route path="/how-to-play" element={<HowToPlay />} />
         <Route path="/strategies" element={<Strategies />} />
+        <Route path="/starting-words" element={<StartingWords />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

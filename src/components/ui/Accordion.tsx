@@ -32,8 +32,8 @@ export const Accordion: React.FC<{ items: AccordionEntry[] }> = ({ items }) => {
         return (
           <div
             key={item.question}
-            className={`rounded-xl border-2 bg-card transition-[border-color,box-shadow] duration-300 ${
-              isOpen ? 'border-ink shadow-[4px_4px_0_var(--color-shadow)]' : 'border-line hover:border-ink-2'
+            className={`rounded-2xl border bg-card transition-[border-color,box-shadow] duration-300 ${
+              isOpen ? 'border-accent/40 shadow-[0_12px_30px_-18px_rgb(120_70_30/0.5)]' : 'border-line hover:border-edge'
             }`}
           >
             <h3 className="m-0 font-sans text-base">
@@ -47,8 +47,8 @@ export const Accordion: React.FC<{ items: AccordionEntry[] }> = ({ items }) => {
               >
                 <span>{item.question}</span>
                 <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-2 border-ink transition-[transform,background-color,color] duration-300 ease-out ${
-                    isOpen ? 'rotate-45 bg-accent text-white' : 'bg-paper text-ink'
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-[transform,background-color,color] duration-300 ease-out ${
+                    isOpen ? 'rotate-45 bg-accent text-white' : 'bg-accent-soft text-accent-2'
                   }`}
                   aria-hidden="true"
                 >

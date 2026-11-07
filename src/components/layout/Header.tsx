@@ -6,7 +6,7 @@ import { HEADER_LINKS } from './nav';
 import { useApp } from '../../context/AppContext';
 
 const iconBtn =
-  'flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg border-2 border-transparent text-ink-2 transition-colors hover:border-ink hover:bg-card hover:text-ink';
+  'flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-card hover:text-ink';
 
 export const Header: React.FC = () => {
   const { openModal, isDark, toggleTheme } = useApp();
@@ -21,7 +21,14 @@ export const Header: React.FC = () => {
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-ink bg-paper/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-edge bg-paper/85 backdrop-blur-md">
+      <div className="flex h-1" aria-hidden="true">
+        <span className="flex-1 bg-accent" />
+        <span className="flex-1 bg-near" />
+        <span className="flex-1 bg-hit" />
+        <span className="flex-1 bg-sky" />
+        <span className="flex-1 bg-plum" />
+      </div>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6">
         <Logo />
 
@@ -66,7 +73,7 @@ export const Header: React.FC = () => {
       </div>
 
       {menuOpen && (
-        <nav id="mobile-menu" aria-label="Mobile" className="animate-fade-in border-t-2 border-ink bg-paper md:hidden">
+        <nav id="mobile-menu" aria-label="Mobile" className="animate-fade-in border-t border-edge bg-paper md:hidden">
           <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-2 px-4 py-4">
             {[...HEADER_LINKS, { to: '/practice', label: 'Practice' }, { to: '/timed', label: 'Timed' }].map((l) => (
               <li key={l.to}>
@@ -74,7 +81,7 @@ export const Header: React.FC = () => {
                   to={l.to}
                   end
                   className={({ isActive }) =>
-                    `block rounded-lg border-2 px-3 py-2.5 font-medium ${isActive ? 'border-ink bg-card text-ink' : 'border-line text-ink-2'}`
+                    `block rounded-xl border px-3 py-2.5 font-medium ${isActive ? 'border-accent/40 bg-accent-soft text-ink' : 'border-line bg-card text-ink-2'}`
                   }
                 >
                   {l.label}

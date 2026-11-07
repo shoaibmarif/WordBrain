@@ -10,6 +10,7 @@ export const LENGTH_LINKS = [5, 6, 7, 8].map((n) => ({ to: `/${n}-letter-word-ga
 export const LEARN_LINKS = [
   { to: '/how-to-play', label: 'How to play' },
   { to: '/strategies', label: 'Tips and strategies' },
+  { to: '/starting-words', label: 'Best starting words' },
   { to: '/faq', label: 'FAQ' },
 ];
 

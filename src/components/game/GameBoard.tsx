@@ -35,7 +35,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   // Tiles shrink a little for longer words so the board fits on a phone.
   // Width is capped by the screen height too, so the keyboard stays in view on phones.
   const rem = { 5: 20, 6: 22, 7: 24, 8: 26 }[wordLength] ?? 20;
-  const maxWidth = `max(14rem, min(${rem}rem, calc((100dvh - 430px) * ${(wordLength / 6).toFixed(3)})))`;
+  const maxWidth = `max(12rem, min(${rem}rem, calc((100dvh - 495px) * ${(wordLength / 6).toFixed(3)})))`;
   const text = wordLength >= 7 ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-[2rem]';
 
   return (

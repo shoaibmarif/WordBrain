@@ -109,6 +109,17 @@ export const ROUTES: RouteMeta[] = [
     parent: '/',
   },
   {
+    path: '/starting-words',
+    title: 'Best Starting Words for 5 to 8 Letter Word Games',
+    description:
+      'The best first and second guesses for word guessing games, worked out from the letters that actually appear in WordBrain’s answers.',
+    label: 'Starting words',
+    heading: 'Best starting words',
+    changefreq: 'monthly',
+    priority: 0.7,
+    parent: '/',
+  },
+  {
     path: '/faq',
     title: 'WordBrain FAQ - Common Questions Answered',
     description: 'How the daily word works, why a word was rejected, what hard mode does, where your stats are saved and more.',

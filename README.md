@@ -25,6 +25,10 @@ there are no ads and you don't need an account. Your stats stay in your browser.
 - **A real dictionary.** Guesses are checked against more than 100,000 English words, so real
   words don't get rejected. Answers come from shorter lists of everyday words.
 - **What does it mean?** Every finished game links to the word on Wiktionary.
+- **Best starting words.** A guide that ranks openers and second guesses for every length,
+  calculated from the game's own answer lists, with a letter frequency chart.
+- **Friendly for first-timers.** The rules pop up on your first visit, an empty board suggests
+  a starting word, and a colour key appears once you start guessing.
 - **Hard mode, high contrast colours** (orange and blue with symbols, for colour-blind players),
   sound and animation toggles, light and dark themes.
 - **Keyboard friendly.** Type straight onto the board; Enter submits, Backspace deletes.

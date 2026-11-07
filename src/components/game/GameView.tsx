@@ -8,12 +8,14 @@ import { useKeyboard } from '../../hooks/useKeyboard';
 import { useTimer } from '../../hooks/useTimer';
 import { GameBoard } from './GameBoard';
 import { Keyboard } from './Keyboard';
-import { ModeTabs } from './ModeTabs';
+import { MODE_COLORS, ModeTabs } from './ModeTabs';
 import { ResultCard } from './ResultCard';
 import { Toast } from '../ui/Toast';
 import { TIMED_SECONDS, WORD_LENGTHS } from '../../utils/constants';
 import { trackEvent } from '../../lib/consent';
+import { suggestedOpener } from '../../game/letterStats';
 import type { GameResult } from '../../hooks/useStatistics';
+
 
 interface DailySetup {
   puzzle: number;
@@ -90,7 +92,7 @@ export const GameView: React.FC<GameViewProps> = ({ mode, fixedLength, daily, ti
   const toolbar = (
       <div className="flex flex-wrap items-center gap-2">
         {mode !== 'practice' && (
-          <span className="chip" title={daily ? 'Daily puzzles solved in a row' : 'Games won in a row'}>
+          <span className="chip border-accent/30 bg-accent-soft text-accent-2" title={daily ? 'Daily puzzles solved in a row' : 'Games won in a row'}>
             <Flame className="h-4 w-4 text-accent" aria-hidden="true" />
             {streak} <span className="sr-only sm:not-sr-only">streak</span>
           </span>
@@ -118,8 +120,8 @@ export const GameView: React.FC<GameViewProps> = ({ mode, fixedLength, daily, ti
                   disabled={midGame && wordLength !== n}
                   title={midGame && wordLength !== n ? 'Finish or skip this word first' : undefined}
                   onClick={() => updateSettings({ wordLength: n })}
-                  className={`h-8 w-7 rounded-md sm:w-8 border-2 font-mono text-sm font-semibold transition-colors disabled:opacity-40 ${
-                    wordLength === n ? 'border-ink bg-ink text-paper' : 'border-line bg-card text-ink-2 hover:border-ink'
+                  className={`h-8 w-7 rounded-lg border font-mono sm:w-8 text-sm font-semibold transition-colors disabled:opacity-40 ${
+                    wordLength === n ? 'border-transparent bg-hit text-white' : 'border-edge bg-card text-ink-2 hover:border-muted'
                   }`}
                 >
                   {n}
@@ -129,7 +131,7 @@ export const GameView: React.FC<GameViewProps> = ({ mode, fixedLength, daily, ti
           </div>
         )}
         {!daily && (
-          <button type="button" onClick={restart} className="chip hover:border-ink hover:text-ink" title="Skip to a new word">
+          <button type="button" onClick={restart} className="chip hover:border-muted hover:text-ink" title="Skip to a new word">
             <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
             <span className="sr-only sm:not-sr-only">New word</span>
           </button>
@@ -140,7 +142,8 @@ export const GameView: React.FC<GameViewProps> = ({ mode, fixedLength, daily, ti
   return (
     <section aria-label="Game" className="mx-auto w-full max-w-3xl">
       <ModeTabs activeOverride={fixedLength ? '/' : undefined} />
-      <div className="block-card relative px-3 pb-5 pt-4 sm:px-6 sm:pb-6 sm:pt-5">
+      <div className="block-card relative px-3 pb-5 pt-5 sm:px-6 sm:pb-6 sm:pt-6">
+        <div className={`absolute inset-x-0 top-0 h-1.5 rounded-t-[20px] ${MODE_COLORS[mode].solid}`} aria-hidden="true" />
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-xl font-bold leading-tight sm:text-2xl">{title}</h1>
@@ -174,14 +177,28 @@ export const GameView: React.FC<GameViewProps> = ({ mode, fixedLength, daily, ti
           )}
         </div>
 
+        {playing && game.guesses.length === 0 && !paused && (
+          <p className="mx-auto mt-1 max-w-[34rem] text-center text-sm text-ink-2">
+            Type any {wordLength} letter word and press Enter. Not sure where to start? Try{' '}
+            <strong className="font-mono tracking-wider text-ink">{suggestedOpener(wordLength)}</strong>.
+          </p>
+        )}
+        {game.guesses.length > 0 && playing && (
+          <ul className="mx-auto mt-1 flex max-w-[34rem] flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-muted" aria-label="Colour key">
+            <li className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-[4px] bg-hit" aria-hidden="true" />Right spot</li>
+            <li className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-[4px] bg-near" aria-hidden="true" />In the word</li>
+            <li className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-[4px] bg-miss" aria-hidden="true" />Not in the word</li>
+          </ul>
+        )}
+
         {mode === 'practice' && playing && (
-          <div className="mx-auto mt-3 flex max-w-[34rem] flex-wrap items-center gap-2 rounded-lg border-2 border-dashed border-line px-3 py-2.5">
-            <Sparkles className="h-4 w-4 text-near" aria-hidden="true" />
+          <div className="mx-auto mt-3 flex max-w-[34rem] flex-wrap items-center gap-2 rounded-2xl bg-near-soft px-3 py-2.5">
+            <Sparkles className="h-4 w-4 text-ink" aria-hidden="true" />
             <span className="mr-auto text-sm font-medium text-ink-2">Stuck?</span>
-            <button type="button" className="chip hover:border-ink hover:text-ink" onClick={() => game.useHint('reveal_letter')}>
+            <button type="button" className="chip hover:border-muted hover:text-ink" onClick={() => game.useHint('reveal_letter')}>
               Show a letter
             </button>
-            <button type="button" className="chip hover:border-ink hover:text-ink" onClick={() => game.useHint('eliminate_letters')}>
+            <button type="button" className="chip hover:border-muted hover:text-ink" onClick={() => game.useHint('eliminate_letters')}>
               Rule out 3 letters
             </button>
             {game.hintLog.length > 0 && (

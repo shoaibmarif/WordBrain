@@ -48,7 +48,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, title, subtitle, ch
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-end justify-center overflow-y-auto p-3 sm:items-center sm:p-6" role="presentation">
-      <div className="animate-fade-in fixed inset-0 bg-ink/45 backdrop-blur-[2px]" aria-hidden="true" onClick={onClose} />
+      <div className="animate-fade-in fixed inset-0 bg-ink/35 backdrop-blur-sm" aria-hidden="true" onClick={onClose} />
       <div
         ref={panelRef}
         role="dialog"
@@ -67,7 +67,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, title, subtitle, ch
           <button
             type="button"
             onClick={onClose}
-            className="-mr-1 -mt-1 rounded-lg border-2 border-transparent p-1.5 text-muted transition-colors hover:border-ink hover:text-ink"
+            className="-mr-1 -mt-1 rounded-full p-1.5 text-muted transition-colors hover:bg-paper-2 hover:text-ink"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

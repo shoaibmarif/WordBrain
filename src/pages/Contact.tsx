@@ -10,6 +10,7 @@ const CARDS = [
     icon: Mail,
     title: 'Email',
     detail: SITE.author.email,
+    tint: 'bg-accent text-white',
     note: 'Best for bug reports, word suggestions and anything else. I read everything.',
   },
   {
@@ -17,6 +18,7 @@ const CARDS = [
     icon: Github,
     title: 'GitHub issues',
     detail: 'shoaibmarif/wordbrain',
+    tint: 'bg-ink text-paper',
     note: 'If you’re a developer, open an issue or a pull request. The code is public.',
   },
   {
@@ -24,6 +26,7 @@ const CARDS = [
     icon: Linkedin,
     title: 'LinkedIn',
     detail: 'in/shoaibmarif',
+    tint: 'bg-sky text-white',
     note: 'For work enquiries or just to connect.',
   },
 ];
@@ -37,9 +40,9 @@ export const Contact: React.FC = () => (
           href={c.href}
           target={c.href.startsWith('mailto:') ? undefined : '_blank'}
           rel="noopener noreferrer"
-          className="block-card flex flex-col p-5 transition-transform hover:-translate-y-0.5"
+          className="block-card lift flex flex-col p-5"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-ink bg-paper text-ink">
+          <span className={`flex h-11 w-11 items-center justify-center rounded-2xl ${c.tint}`}>
             <c.icon className="h-5 w-5" aria-hidden="true" />
           </span>
           <span className="mt-4 font-display text-lg font-bold">{c.title}</span>

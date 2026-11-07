@@ -26,7 +26,8 @@ export const Strategies: React.FC = () => (
         </li>
       </ul>
       <p>
-        Pick one and stick with it for a while. Using the same opener every time means you start recognising patterns in what
+        For a ranked list for every word length, worked out from our real answer lists, see{' '}
+        <Link to="/starting-words">best starting words</Link>. Pick one and stick with it for a while. Using the same opener every time means you start recognising patterns in what
         comes back.
       </p>
 

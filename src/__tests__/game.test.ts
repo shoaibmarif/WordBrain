@@ -57,6 +57,15 @@ describe('hints', () => {
 });
 
 describe('word lists', () => {
+  it('only has answers of the right length, with no duplicates', () => {
+    for (const n of [5, 6, 7, 8] as const) {
+      const list = getSolutionsForLength(n);
+      expect(list.length).toBeGreaterThan(300);
+      for (const w of list) expect(w, w).toMatch(new RegExp(`^[A-Z]{${n}}$`));
+      expect(new Set(list).size).toBe(list.length);
+    }
+  });
+
   it('accepts every possible answer as a guess', () => {
     for (const n of [5, 6, 7, 8] as const) {
       for (const w of getSolutionsForLength(n)) expect(isAllowedWord(w, n), w).toBe(true);

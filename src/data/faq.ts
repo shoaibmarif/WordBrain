@@ -35,6 +35,21 @@ export const FAQ_ITEMS: FaqItem[] = [
       'Yes. The daily word is once a day, but the main game, practice and timed modes give you a fresh word every time, as many times as you like, with 5, 6, 7 or 8 letters.',
   },
   {
+    question: 'What’s a good first word?',
+    answer:
+      'One that tests common letters without repeating any. For five letter words, ALTER, STARE and ARISE all do well. The best starting words page ranks openers for every length, based on the letters that actually appear in WordBrain’s answers.',
+  },
+  {
+    question: 'Do hints or practice games affect my stats?',
+    answer:
+      'No. Practice mode is separate on purpose: use as many hints as you like and your win rate and streak stay exactly as they were. Unlimited, timed and daily games do count.',
+  },
+  {
+    question: 'Why did my daily streak reset?',
+    answer:
+      'The daily streak counts puzzles solved on back to back days. Missing a day or running out of guesses sets it back to zero. Your streak is stored in this browser, so playing on a different device or clearing your browser data starts a new one.',
+  },
+  {
     question: 'Where are my stats saved?',
     answer:
       'In your browser, on this device. There’s no account and nothing is uploaded, which also means your stats won’t follow you to another phone or computer. You can reset them from the statistics window.',

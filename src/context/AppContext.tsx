@@ -77,6 +77,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     document.documentElement.classList.toggle('reduced-motion', !animationsEnabled);
   }, [animationsEnabled]);
 
+  // Show the rules once, the first time someone visits.
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(k('seen_help'))) {
+        const id = window.setTimeout(() => {
+          localStorage.setItem(k('seen_help'), '1');
+          setModal('help');
+        }, 600);
+        return () => window.clearTimeout(id);
+      }
+    } catch {
+      // storage blocked: skip the welcome
+    }
+  }, []);
+
   const openModal = useCallback((m: Exclude<ModalName, null>) => setModal(m), []);
   const closeModal = useCallback(() => setModal(null), []);
 

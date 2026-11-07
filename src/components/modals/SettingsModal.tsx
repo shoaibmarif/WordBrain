@@ -11,8 +11,8 @@ const Toggle: React.FC<{ label: string; hint: string; checked: boolean; onChange
     </span>
     <span className="relative mt-1 shrink-0">
       <input type="checkbox" className="peer sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-      <span className="block h-7 w-12 rounded-full border-2 border-ink bg-paper-2 transition-colors peer-checked:bg-hit peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent" />
-      <span className="absolute left-1 top-1 h-5 w-5 rounded-full border-2 border-ink bg-card transition-transform peer-checked:translate-x-5" />
+      <span className="block h-7 w-12 rounded-full border border-edge bg-paper-2 transition-colors peer-checked:bg-hit peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent" />
+      <span className="absolute left-1 top-1 h-5 w-5 rounded-full border border-edge bg-card transition-transform peer-checked:translate-x-5" />
     </span>
   </label>
 );
@@ -21,7 +21,7 @@ function Segmented<T extends string>({ label, value, options, onChange }: { labe
   return (
     <fieldset className="py-3.5">
       <legend className="mb-2 font-semibold text-ink">{label}</legend>
-      <div className="flex rounded-lg border-2 border-ink bg-paper-2 p-1">
+      <div className="flex rounded-lg border border-edge bg-paper-2 p-1">
         {options.map((o) => (
           <label key={o.value} className="flex-1">
             <input type="radio" className="peer sr-only" name={label} checked={value === o.value} onChange={() => onChange(o.value)} />
