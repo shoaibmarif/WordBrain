@@ -1,78 +1,37 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { GameMode, GameStatus } from '../game/types';
+import { useEffect, useRef, useState } from 'react';
 
-interface UseTimerProps {
-  mode: GameMode;
-  status: GameStatus;
-  initialTimeSeconds?: number;
-  onTimeUp?: () => void;
+interface UseTimerOptions {
+  /** Seconds on the clock at the start of each game. */
+  duration: number;
+  /** Counts down only while true (game in play, not paused). */
+  running: boolean;
+  /** Any change (e.g. a new target word) puts the full time back on the clock. */
+  resetKey: unknown;
+  onTimeUp: () => void;
 }
 
-export function useTimer({
-  mode,
-  status,
-  initialTimeSeconds = 120,
-  onTimeUp,
-}: UseTimerProps) {
-  const [seconds, setSeconds] = useState(mode === 'timed' ? initialTimeSeconds : 0);
-  const [isPaused, setIsPaused] = useState(false);
+/** Countdown for timed mode. Resets itself whenever a new game starts. */
+export function useTimer({ duration, running, resetKey, onTimeUp }: UseTimerOptions) {
+  const [seconds, setSeconds] = useState(duration);
   const onTimeUpRef = useRef(onTimeUp);
   onTimeUpRef.current = onTimeUp;
 
-  // Reset timer on new game
-  const resetTimer = useCallback(
-    (newInitialSeconds?: number) => {
-      setSeconds(
-        mode === 'timed'
-          ? newInitialSeconds ?? initialTimeSeconds
-          : 0
-      );
-      setIsPaused(false);
-    },
-    [mode, initialTimeSeconds]
-  );
-
-  const togglePause = useCallback(() => {
-    if (status === 'playing') {
-      setIsPaused(prev => !prev);
-    }
-  }, [status]);
+  useEffect(() => {
+    setSeconds(duration);
+  }, [resetKey, duration]);
 
   useEffect(() => {
-    if (status !== 'playing' || isPaused) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setSeconds(prev => {
-        if (mode === 'timed') {
-          if (prev <= 1) {
-            clearInterval(interval);
-            onTimeUpRef.current?.();
-            return 0;
-          }
-          return prev - 1;
-        } else {
-          return prev + 1;
-        }
-      });
+    if (!running) return;
+    const id = window.setInterval(() => {
+      setSeconds((s) => Math.max(0, s - 1));
     }, 1000);
+    return () => window.clearInterval(id);
+  }, [running]);
 
-    return () => clearInterval(interval);
-  }, [status, isPaused, mode]);
+  useEffect(() => {
+    if (running && seconds === 0) onTimeUpRef.current();
+  }, [seconds, running]);
 
-  const formatTime = useCallback((totalSecs: number) => {
-    const mins = Math.floor(totalSecs / 60);
-    const secs = totalSecs % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  }, []);
-
-  return {
-    seconds,
-    formattedTime: formatTime(seconds),
-    isPaused,
-    setIsPaused,
-    togglePause,
-    resetTimer,
-  };
+  const formatted = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+  return { seconds, formatted };
 }

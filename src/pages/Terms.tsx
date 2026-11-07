@@ -1,74 +1,53 @@
 import React from 'react';
-import { SeoHead } from '../components/common/SeoHead';
-import { APP_NAME } from '../utils/constants';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ContentPage } from '../components/layout/ContentPage';
+import { SITE } from '../seo/site';
 
-export const TermsPage: React.FC = () => {
-  const navigateToHome = () => {
-    window.location.hash = '#/';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+export const Terms: React.FC = () => (
+  <ContentPage path="/terms" eyebrow="Last updated 7 November 2026" intro="By using WordBrain you agree to these terms. They’re short, and written to be read.">
+    <div className="prose-page">
+      <h2>Using WordBrain</h2>
+      <p>
+        WordBrain is a free game for personal entertainment. You can play as much as you like. Please don’t try to break it, overload
+        it, or use it for anything unlawful.
+      </p>
 
-  return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
-      <SeoHead
-        title={`Terms of Service - ${APP_NAME}`}
-        description="Terms of service and usage guidelines for playing the free browser-based WordBrain Game."
-        canonicalPath="/terms"
-      />
+      <h2>No guarantees</h2>
+      <p>
+        We try to keep the game running and the word lists sensible, but WordBrain is provided as it is, without warranties of any
+        kind. It may change, pause or stop at any time. Your stats are stored in your browser, so they can be lost if you clear your
+        data or switch devices, and we can’t recover them.
+      </p>
 
-      <button
-        onClick={navigateToHome}
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Game
-      </button>
+      <h2>Words</h2>
+      <p>
+        Answers are picked from lists of common English words, and guesses are checked against a larger open source dictionary.
+        A word being accepted or rejected isn’t a judgement on whether it’s “real”. If something looks wrong, let us know.
+      </p>
 
-      <div>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
-          <FileText className="w-8 h-8 text-emerald-600" />
-          Terms of Service
-        </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Effective Date: September 20, 2026
-        </p>
-      </div>
+      <h2>The code and content</h2>
+      <p>
+        The source code is public on <a href={SITE.repo} target="_blank" rel="noopener noreferrer">GitHub</a>. The name WordBrain, the
+        logo and the written content on this site belong to {SITE.author.name}. The dictionary is used under the MIT licence of the{' '}
+        <a href="https://github.com/sindresorhus/word-list" target="_blank" rel="noopener noreferrer">word-list</a> package.
+      </p>
 
-      <div className="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
-        <section className="space-y-2">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">1. Acceptance of Terms</h2>
-          <p>
-            By accessing or playing {APP_NAME}, you agree to abide by these Terms of Service. If you do not agree
-            with any part of these terms, please do not use the application.
-          </p>
-        </section>
+      <h2>Liability</h2>
+      <p>
+        To the extent the law allows, we aren’t liable for any loss arising from using WordBrain, including lost streaks, which we
+        know can hurt.
+      </p>
 
-        <section className="space-y-2">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">2. Free Entertainment Use</h2>
-          <p>
-            {APP_NAME} is provided strictly for personal, non-commercial entertainment and educational purposes.
-            The software is provided "as is", without warranty of any kind, express or implied.
-          </p>
-        </section>
+      <h2>Privacy</h2>
+      <p>
+        How we handle data is covered in the <Link to="/privacy">privacy policy</Link>.
+      </p>
 
-        <section className="space-y-2">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">3. Intellectual Property</h2>
-          <p>
-            {APP_NAME} is an original, independent word-puzzle implementation. All code, design, and assets are
-            proprietary or appropriately licensed. "Wordle" is a trademark of The New York Times Company; this
-            game is not affiliated with, sponsored by, or endorsed by The New York Times Company.
-          </p>
-        </section>
-
-        <section className="space-y-2">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">4. Modifications</h2>
-          <p>
-            We reserve the right to modify or update these terms at any time without prior notice. Continued use
-            of the game constitutes acceptance of updated terms.
-          </p>
-        </section>
-      </div>
+      <h2>Changes and contact</h2>
+      <p>
+        We may update these terms from time to time; the date at the top shows the latest version. Questions? Email{' '}
+        <a href={`mailto:${SITE.author.email}`}>{SITE.author.email}</a>.
+      </p>
     </div>
-  );
-};
+  </ContentPage>
+);

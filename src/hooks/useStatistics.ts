@@ -1,9 +1,21 @@
 import { useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
-import { GameHistoryItem, GameMode, GameStats, WordLength } from '../game/types';
+import type { GameHistoryItem, GameMode, GameStats, WordLength } from '../game/types';
 import { STORAGE_KEYS } from '../utils/constants';
 
-const initialStats: GameStats = {
+export interface GameResult {
+  mode: GameMode;
+  wordLength: WordLength;
+  targetWord: string;
+  guesses: string[];
+  won: boolean;
+  attemptsUsed: number;
+  maxAttempts: number;
+  durationSeconds: number;
+  hintsUsed: number;
+}
+
+export const initialStats: GameStats = {
   gamesPlayed: 0,
   gamesWon: 0,
   gamesLost: 0,
@@ -16,108 +28,55 @@ const initialStats: GameStats = {
   averageGuesses: 0,
 };
 
+/**
+ * Adds a finished game to the running totals. Practice games are relaxed
+ * on purpose (hints, no pressure), so they go in the history but don't touch
+ * the stats or the win streak.
+ */
+export function applyResult(prev: GameStats, r: GameResult): GameStats {
+  if (r.mode === 'practice') return prev;
+  const gamesPlayed = prev.gamesPlayed + 1;
+  const gamesWon = prev.gamesWon + (r.won ? 1 : 0);
+  const currentStreak = r.won ? prev.currentStreak + 1 : 0;
+  const guessDistribution = { ...prev.guessDistribution };
+  let totalGuessesInWins = prev.totalGuessesInWins;
+  if (r.won) {
+    guessDistribution[r.attemptsUsed] = (guessDistribution[r.attemptsUsed] || 0) + 1;
+    totalGuessesInWins += r.attemptsUsed;
+  }
+  return {
+    gamesPlayed,
+    gamesWon,
+    gamesLost: gamesPlayed - gamesWon,
+    winPercentage: Math.round((gamesWon / gamesPlayed) * 100),
+    currentStreak,
+    maxStreak: Math.max(prev.maxStreak, currentStreak),
+    guessDistribution,
+    totalGuessesInWins,
+    totalTimeSeconds: prev.totalTimeSeconds + r.durationSeconds,
+    averageGuesses: gamesWon > 0 ? Math.round((totalGuessesInWins / gamesWon) * 10) / 10 : 0,
+  };
+}
+
 export function useStatistics() {
   const [stats, setStats] = useLocalStorage<GameStats>(STORAGE_KEYS.STATS, initialStats);
   const [history, setHistory] = useLocalStorage<GameHistoryItem[]>(STORAGE_KEYS.HISTORY, []);
 
   const recordGameResult = useCallback(
-    (params: {
-      mode: GameMode;
-      wordLength: WordLength;
-      targetWord: string;
-      guesses: string[];
-      won: boolean;
-      attemptsUsed: number;
-      maxAttempts: number;
-      durationSeconds: number;
-      hintsUsed?: number;
-    }) => {
-      const {
-        mode,
-        wordLength,
-        targetWord,
-        guesses,
-        won,
-        attemptsUsed,
-        maxAttempts,
-        durationSeconds,
-        hintsUsed = 0,
-      } = params;
-
-      // Update General Stats
-      setStats(prev => {
-        const gamesPlayed = prev.gamesPlayed + 1;
-        const gamesWon = prev.gamesWon + (won ? 1 : 0);
-        const gamesLost = prev.gamesLost + (won ? 0 : 1);
-        const winPercentage = Math.round((gamesWon / gamesPlayed) * 100);
-
-        const currentStreak = won ? prev.currentStreak + 1 : 0;
-        const maxStreak = Math.max(prev.maxStreak, currentStreak);
-
-        const guessDistribution = { ...prev.guessDistribution };
-        let totalGuessesInWins = prev.totalGuessesInWins;
-
-        if (won) {
-          guessDistribution[attemptsUsed] = (guessDistribution[attemptsUsed] || 0) + 1;
-          totalGuessesInWins += attemptsUsed;
-        }
-
-        const averageGuesses =
-          gamesWon > 0 ? parseFloat((totalGuessesInWins / gamesWon).toFixed(1)) : 0;
-
-        return {
-          gamesPlayed,
-          gamesWon,
-          gamesLost,
-          winPercentage,
-          currentStreak,
-          maxStreak,
-          guessDistribution,
-          totalGuessesInWins,
-          totalTimeSeconds: prev.totalTimeSeconds + durationSeconds,
-          averageGuesses,
-        };
-      });
-
-      // Add to Game History (max 50)
-      const newHistoryItem: GameHistoryItem = {
-        id: `${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    (r: GameResult) => {
+      setStats((prev) => applyResult(prev, r));
+      const item: GameHistoryItem = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         date: new Date().toISOString(),
-        mode,
-        wordLength,
-        targetWord,
-        guesses,
-        won,
-        attemptsUsed,
-        maxAttempts,
-        durationSeconds,
-        hintsUsed,
+        ...r,
       };
-
-      setHistory(prev => [newHistoryItem, ...prev.slice(0, 49)]);
+      setHistory((prev) => [item, ...prev.slice(0, 49)]);
     },
     [setStats, setHistory]
   );
 
-  const resetStats = useCallback(() => {
-    setStats(initialStats);
-  }, [setStats]);
+  const resetStats = useCallback(() => setStats(initialStats), [setStats]);
+  const clearHistory = useCallback(() => setHistory([]), [setHistory]);
 
-  const clearHistory = useCallback(() => {
-    setHistory([]);
-  }, [setHistory]);
-
-  const streak = {
-    currentStreak: stats.currentStreak,
-    maxStreak: stats.maxStreak,
-  };
-
-  return {
-    stats,
-    streak,
-    history,
-    recordGameResult,
-    resetStats,
-    clearHistory,
-  };
+  return { stats, history, recordGameResult, resetStats, clearHistory };
 }

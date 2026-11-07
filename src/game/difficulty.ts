@@ -48,10 +48,12 @@ export function getRandomWord(words: string[]): string {
  */
 export function getRevealLetterHint(
   target: string,
-  currentEvaluations: LetterEvaluation[][]
+  currentEvaluations: LetterEvaluation[][],
+  alreadyRevealed: Iterable<number> = []
 ): { char: string; position: number } | null {
   const upper = target.toUpperCase();
-  const knownPositions = new Set<number>();
+  // Skip positions the player has already found or been given as a hint.
+  const knownPositions = new Set<number>(alreadyRevealed);
 
   for (const row of currentEvaluations) {
     row.forEach((le, idx) => {
@@ -73,7 +75,7 @@ export function getRevealLetterHint(
   const chosenIdx = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
   return {
     char: upper[chosenIdx],
-    position: chosenIdx + 1, // 1-based index for display
+    position: chosenIdx + 1, // 1-based for display
   };
 }
 

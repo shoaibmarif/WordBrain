@@ -1,82 +1,325 @@
 @import "tailwindcss";
 
+/* Dark mode follows the .dark class set by useTheme (not the OS directly). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Design tokens ─────────────────────────────────────────────────────────
+   Paper & ink: warm paper, ink-black type, letterpress tiles with a hard
+   offset shadow. Each token becomes a Tailwind utility (bg-paper, text-ink…). */
+@theme {
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-paper: #f7f2e8;
+  --color-paper-2: #efe7d7;
+  --color-card: #fffdf8;
+  --color-ink: #1d1a16;
+  --color-ink-2: #4a4237;
+  --color-muted: #7a6f60;
+  --color-line: #d9cfbd;
+  --color-shadow: #1d1a16;
+
+  --color-accent: #e4572e;
+  --color-accent-2: #c94520;
+
+  /* Letter feedback */
+  --color-hit: #2c7a6b;
+  --color-near: #e0a82e;
+  --color-miss: #8e8577;
+  --color-hit-ink: #ffffff;
+  --color-near-ink: #1d1a16;
+  --color-miss-ink: #ffffff;
+}
+
+.dark {
+  --color-paper: #16181f;
+  --color-paper-2: #1c1f27;
+  --color-card: #20242d;
+  --color-ink: #f2ece0;
+  --color-ink-2: #cfc6b6;
+  --color-muted: #9a917f;
+  --color-line: #353a46;
+  --color-shadow: #07080b;
+  --color-accent: #f06a42;
+  --color-accent-2: #ff8a63;
+  --color-hit: #2f8f7c;
+  --color-near: #e6b23c;
+  --color-miss: #4b505c;
+}
+
+/* Colour-blind friendly palette (Settings → High contrast). */
+.high-contrast {
+  --color-hit: #e8641c;
+  --color-near: #2d6cdf;
+  --color-near-ink: #ffffff;
+}
+
 @layer base {
-  :root {
-    --color-correct: #10b981;
-    --color-present: #f59e0b;
-    --color-absent: #64748b;
-    --app-bg: #f8fafc;
-    --surface-bg: #ffffff;
-    --border-subtle: #e2e8f0;
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
-
-  .dark {
-    --color-correct: #10b981;
-    --color-present: #f59e0b;
-    --color-absent: #475569;
-    --app-bg: #090d16;
-    --surface-bg: #111827;
-    --border-subtle: #1e293b;
-  }
-
-  .high-contrast {
-    --color-correct: #ea580c; /* High-contrast orange */
-    --color-present: #0284c7; /* High-contrast sky blue */
-    --color-absent: #475569;
-  }
-
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-[#090d16] dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased font-sans selection:bg-emerald-500 selection:text-white;
-    background-image: radial-gradient(at top center, rgba(16, 185, 129, 0.04) 0%, transparent 70%);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    /* A faint dot grid, like a notebook page. */
+    background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 7%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
   }
-
-  .dark body {
-    background-image: radial-gradient(at top center, rgba(16, 185, 129, 0.08) 0%, rgba(9, 13, 22, 1) 75%);
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
-}
-
-/* 3D Tile and Keycap Depth */
-.tile-perspective {
-  perspective: 1000px;
-}
-
-.tile-face {
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-}
-
-/* Tactile keycap styling */
-.keycap-btn {
-  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.12);
-  transition: all 0.08s ease-in-out;
-}
-
-.keycap-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-}
-
-.dark .keycap-btn {
-  box-shadow: 0 2.5px 0 0 rgba(0, 0, 0, 0.45);
-}
-
-.dark .keycap-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-}
-
-/* Animations */
-@keyframes pop {
-  0% {
-    transform: scale(0.88);
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
   }
-  50% {
-    transform: scale(1.1);
+  p {
+    text-wrap: pretty;
   }
-  100% {
-    transform: scale(1);
+  ::selection {
+    background: var(--color-near);
+    color: var(--color-near-ink);
+  }
+  :focus-visible {
+    outline: 2.5px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  button,
+  a,
+  summary,
+  [role="button"] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
   }
 }
+
+@layer components {
+  /* Raised "block" surfaces: thin ink outline + hard offset shadow. */
+  .block-card {
+    background: var(--color-card);
+    border: 2px solid var(--color-ink);
+    border-radius: 14px;
+    box-shadow: 4px 4px 0 var(--color-shadow);
+  }
+  .soft-card {
+    background: var(--color-card);
+    border: 1.5px solid var(--color-line);
+    border-radius: 14px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding: 0 1.15rem;
+    border-radius: 10px;
+    border: 2px solid var(--color-ink);
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    box-shadow: 3px 3px 0 var(--color-shadow);
+    transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+  }
+  .btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 var(--color-shadow);
+  }
+  .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--color-shadow);
+  }
+  .btn-accent {
+    background: var(--color-accent);
+    color: #fff;
+  }
+  .btn-plain {
+    background: var(--color-card);
+    color: var(--color-ink);
+  }
+  .btn-sm {
+    height: 2.25rem;
+    padding: 0 0.85rem;
+    font-size: 0.875rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    height: 2rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-line);
+    background: var(--color-card);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink-2);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* Long-form text */
+  .prose-page {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-ink-2);
+  }
+  .prose-page h2 {
+    font-size: 1.6rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 2.5rem 0 0.75rem;
+  }
+  .prose-page h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 1.75rem 0 0.5rem;
+  }
+  .prose-page p,
+  .prose-page ul,
+  .prose-page ol {
+    margin-bottom: 1rem;
+  }
+  .prose-page ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .prose-page ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+  .prose-page li {
+    margin-bottom: 0.4rem;
+  }
+  .prose-page li::marker {
+    color: var(--color-accent);
+  }
+  .prose-page a {
+    color: var(--color-accent-2);
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+  }
+  .dark .prose-page a {
+    color: var(--color-accent-2);
+  }
+  .prose-page strong {
+    color: var(--color-ink);
+  }
+  .prose-page code,
+  .prose-page kbd {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-paper-2);
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    padding: 0.05em 0.35em;
+  }
+
+  /* ── Letter tiles ───────────────────────────────────────────────── */
+  .tile {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid var(--color-line);
+    background: var(--color-card);
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1;
+    user-select: none;
+    transition: border-color 0.12s ease, transform 0.12s ease;
+  }
+  .tile[data-state="tbd"] {
+    border-color: var(--color-ink);
+    box-shadow: 2px 2px 0 var(--color-shadow);
+  }
+  .tile[data-state="correct"],
+  .tile[data-state="present"],
+  .tile[data-state="absent"] {
+    border-color: var(--color-ink);
+    box-shadow: 3px 3px 0 var(--color-shadow);
+  }
+  .tile[data-state="correct"] {
+    background: var(--color-hit);
+    color: var(--color-hit-ink);
+  }
+  .tile[data-state="present"] {
+    background: var(--color-near);
+    color: var(--color-near-ink);
+  }
+  .tile[data-state="absent"] {
+    background: var(--color-miss);
+    color: var(--color-miss-ink);
+  }
+
+  /* ── On-screen keys ─────────────────────────────────────────────── */
+  .key {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.25rem;
+    min-width: 0;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-ink);
+    background: var(--color-card);
+    color: var(--color-ink);
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 0 var(--color-shadow);
+    transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.15s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .key:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--color-shadow);
+  }
+  .key[data-state="correct"] {
+    background: var(--color-hit);
+    color: var(--color-hit-ink);
+  }
+  .key[data-state="present"] {
+    background: var(--color-near);
+    color: var(--color-near-ink);
+  }
+  .key[data-state="absent"] {
+    background: var(--color-miss);
+    color: var(--color-miss-ink);
+    opacity: 0.75;
+  }
+  .key[data-wide="true"] {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* ── Animations ───────────────────────────────────────────────────── */
 
 @keyframes flipIn {
   0% {
@@ -139,5 +382,57 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.15s ease-out both;
+}
+.animate-modal-in {
+  animation: modal-in 0.2s ease-out both;
+}
+
+/* Settings → Animations off */
+.reduced-motion *,
+.reduced-motion ::before,
+.reduced-motion ::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* High contrast mode adds a small symbol to each revealed tile, so the
+   feedback doesn't rely on colour alone. */
+.hc-mark {
+  display: none;
+}
+.high-contrast .hc-mark {
+  display: block;
+}
+.key:disabled {
+  opacity: 0.55;
+}
+
+@media (min-width: 640px) {
+  .key {
+    height: 3.5rem;
   }
 }

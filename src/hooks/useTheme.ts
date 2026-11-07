@@ -6,7 +6,7 @@ import { STORAGE_KEYS } from '../utils/constants';
 export function useTheme() {
   const [theme, setTheme] = useLocalStorage<ThemeMode>(
     `${STORAGE_KEYS.SETTINGS}_theme`,
-    'system'
+    'light'
   );
 
   const [isDark, setIsDark] = useState<boolean>(() => {

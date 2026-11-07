@@ -23,9 +23,33 @@ export function getSolutionsForLength(length: WordLength): string[] {
   return solutionLists[length] || WORDS_5_SOLUTIONS;
 }
 
+/**
+ * Full English dictionaries (public/words/{n}.txt, built from the MIT-licensed
+ * `word-list` package) are fetched in the background so players can guess any
+ * real word, not just the curated lists. Until a dictionary arrives, the
+ * curated lists are used, so the game always works offline or if the fetch fails.
+ */
+const dictionaries: Partial<Record<WordLength, Set<string>>> = {};
+const pending: Partial<Record<WordLength, Promise<void>>> = {};
+
+export function loadDictionary(length: WordLength): Promise<void> {
+  if (dictionaries[length]) return Promise.resolve();
+  if (pending[length]) return pending[length]!;
+  if (typeof fetch === 'undefined') return Promise.resolve();
+  pending[length] = Promise.resolve()
+    .then(() => fetch(`/words/${length}.txt`))
+    .then((res) => (res.ok ? res.text() : Promise.reject(new Error(String(res.status)))))
+    .then((text) => {
+      dictionaries[length] = new Set(text.split('\n').filter(Boolean));
+    })
+    .catch(() => {
+      // Keep using the curated list; try again next time a game starts.
+      delete pending[length];
+    });
+  return pending[length]!;
+}
+
 export function isAllowedWord(word: string, length: WordLength): boolean {
   const upper = word.toUpperCase().trim();
-  const set = allowedSets[length];
-  if (!set) return false;
-  return set.has(upper);
+  return Boolean(allowedSets[length]?.has(upper) || dictionaries[length]?.has(upper));
 }

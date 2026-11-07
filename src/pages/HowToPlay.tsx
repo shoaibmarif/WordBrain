@@ -1,141 +1,89 @@
 import React from 'react';
-import { SeoHead } from '../components/common/SeoHead';
-import { LetterTile } from '../components/GameBoard/LetterTile';
-import { APP_NAME } from '../utils/constants';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ContentPage } from '../components/layout/ContentPage';
+import { ExampleRow } from '../components/game/ExampleRow';
 
-export const HowToPlayPage: React.FC = () => {
-  const navigateToHome = () => {
-    window.location.hash = '#/';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+export const HowToPlay: React.FC = () => (
+  <ContentPage path="/how-to-play" eyebrow="The rules" intro="You can learn WordBrain in about a minute. Here’s everything, including the slightly fiddly bit about repeated letters.">
+    <div className="prose-page">
+      <h2>The goal</h2>
+      <p>
+        There’s a hidden word. You have six guesses to find it. Each guess has to be a real English word with the right number of
+        letters, and after every guess the tiles change colour to tell you how close you are.
+      </p>
 
-  return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
-      <SeoHead
-        title={`How to Play ${APP_NAME} - Complete Rules & Visual Guide`}
-        description="Learn the official rules, letter feedback colors, and strategies for solving word guessing puzzles."
-        canonicalPath="/how-to-play"
-      />
-
-      <button
-        onClick={navigateToHome}
-        className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Game
-      </button>
-
-      <div>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
-          How to Play {APP_NAME}
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Master the rules of the six-attempt word guessing challenge
-        </p>
-      </div>
-
-      <div className="space-y-6 text-sm sm:text-base text-slate-700 dark:text-slate-300 leading-relaxed">
-        <section className="space-y-3">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">The Objective</h2>
-          <p>
-            The goal of the game is to identify a secret mystery word in <strong>six attempts or fewer</strong>.
-            In the standard mode, the word is five letters long, but the game also supports 6, 7, and 8-letter
-            variants.
+      <h2>What the colours mean</h2>
+      <div className="my-6 space-y-5">
+        <div>
+          <ExampleRow word="BRAVE" states={{ 0: 'correct' }} />
+          <p className="mt-2">
+            <strong>Teal</strong>: B is in the word, in exactly this spot.
           </p>
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Game Rules & Workflow</h2>
-          <div className="space-y-3">
-            <div className="flex gap-3 items-start">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
-              <p>
-                <strong>Valid Words Only:</strong> Every guess must be an authentic, recognized English word.
-                Random letter strings or abbreviations like <em>XYZAB</em> are rejected without costing an
-                attempt.
-              </p>
-            </div>
-            <div className="flex gap-3 items-start">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
-              <p>
-                <strong>Submitting a Guess:</strong> After entering your letters using your physical keyboard
-                or the on-screen keys, press the <strong>Enter</strong> key to confirm.
-              </p>
-            </div>
-            <div className="flex gap-3 items-start">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
-              <p>
-                <strong>Tile Reveal:</strong> Once submitted, the tiles will flip one by one to reveal colored
-                feedback about each letter.
-              </p>
-            </div>
-            <div className="flex gap-3 items-start">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
-              <p>
-                <strong>Keyboard Tracking:</strong> The virtual keyboard updates with your best-known state
-                for every letter (Green &gt; Yellow &gt; Gray).
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-4 pt-2">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-            Tile Feedback Meanings
-          </h2>
-
-          <div className="p-4 bg-white dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-            <div className="flex gap-2 items-center">
-              <div className="w-12 h-12">
-                <LetterTile char="S" state="correct" />
-              </div>
-              <div>
-                <p className="font-bold text-emerald-600 dark:text-emerald-400">Green / Orange (Correct)</p>
-                <p className="text-xs">The letter S is in the word and in the exact position.</p>
-              </div>
-            </div>
-
-            <div className="flex gap-2 items-center">
-              <div className="w-12 h-12">
-                <LetterTile char="T" state="present" />
-              </div>
-              <div>
-                <p className="font-bold text-amber-500">Yellow / Blue (Present)</p>
-                <p className="text-xs">The letter T is in the word, but in a different position.</p>
-              </div>
-            </div>
-
-            <div className="flex gap-2 items-center">
-              <div className="w-12 h-12">
-                <LetterTile char="N" state="absent" />
-              </div>
-              <div>
-                <p className="font-bold text-slate-500">Gray (Absent)</p>
-                <p className="text-xs">The letter N does not exist in the target word.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-3">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Hard Mode</h2>
-          <p>
-            Looking for a bigger challenge? Toggle <strong>Hard Mode</strong> in Settings before starting a
-            round. When active, every subsequent guess must strictly include all previously discovered letters
-            and keep confirmed letters in their exact positions.
+        </div>
+        <div>
+          <ExampleRow word="MOUSE" states={{ 1: 'present' }} />
+          <p className="mt-2">
+            <strong>Mustard</strong>: O is in the word, but in a different spot.
           </p>
-        </section>
+        </div>
+        <div>
+          <ExampleRow word="PLANK" states={{ 4: 'absent' }} />
+          <p className="mt-2">
+            <strong>Grey</strong>: there’s no K anywhere in the word.
+          </p>
+        </div>
       </div>
+      <p>The keyboard keeps track for you, so you can see at a glance which letters you’ve ruled in and out.</p>
 
-      <div className="pt-4 text-center">
-        <button
-          onClick={navigateToHome}
-          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg transition-colors cursor-pointer"
-        >
-          Play a Game Now
-        </button>
-      </div>
+      <h2>Repeated letters</h2>
+      <p>
+        Answers can have the same letter twice, like LEVEL or GEESE. Each letter in the answer can only be matched once, which
+        leads to a couple of rules worth knowing:
+      </p>
+      <ul>
+        <li>If you guess two Es and only one lights up, the word has exactly one E.</li>
+        <li>If both light up (in any colour), the word has at least two.</li>
+        <li>Teal matches are counted first, so a teal E always takes priority over a mustard one.</li>
+      </ul>
+
+      <h2>Ways to play</h2>
+      <ul>
+        <li>
+          <Link to="/daily">Daily</Link>: one five letter word a day, the same for everyone. One attempt, and a streak for every day
+          in a row you solve it.
+        </li>
+        <li>
+          <Link to="/">Unlimited</Link>: a new word every time, with 5 to 8 letters and three difficulty levels.
+        </li>
+        <li>
+          <Link to="/practice">Practice</Link>: hints are available and nothing counts towards your stats.
+        </li>
+        <li>
+          <Link to="/timed">Timed</Link>: find the word in two minutes or it counts as a loss.
+        </li>
+      </ul>
+
+      <h2>Settings worth knowing about</h2>
+      <p>Open the gear icon at the top of the page to change these. They’re saved on your device.</p>
+      <ul>
+        <li>
+          <strong>Hard mode</strong>: once you find a letter you have to keep using it. Teal letters stay put and mustard letters
+          have to appear somewhere in your next guess.
+        </li>
+        <li>
+          <strong>Difficulty</strong>: easy picks common words with plenty of vowels, hard leans towards words with rarer letters
+          or repeats.
+        </li>
+        <li>
+          <strong>High contrast</strong>: switches to orange and blue and adds a symbol to each tile, for colour-blind players.
+        </li>
+      </ul>
+
+      <h2>Playing with a keyboard</h2>
+      <p>
+        On a computer just start typing. <kbd>Enter</kbd> submits your guess and <kbd>Backspace</kbd> deletes a letter. Ready to try
+        it? <Link to="/">Start a game</Link>, or read some <Link to="/strategies">tips first</Link>.
+      </p>
     </div>
-  );
-};
+  </ContentPage>
+);

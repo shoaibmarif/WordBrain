@@ -1,5 +1,5 @@
-import { GameMode, LetterEvaluation, WordLength } from './types';
-import { APP_NAME } from '../utils/constants';
+import type { GameMode, LetterEvaluation, WordLength } from './types';
+import { SITE } from '../seo/site';
 
 export interface ShareOptions {
   mode: GameMode;
@@ -10,100 +10,46 @@ export interface ShareOptions {
   history: LetterEvaluation[][];
   highContrast?: boolean;
   hardMode?: boolean;
+  /** Daily puzzle number, shown as "WordBrain #12". */
+  puzzle?: number;
 }
 
-/**
- * Converts letter evaluations to spoiler-free emoji grid.
- */
-export function generateEmojiGrid(
-  history: LetterEvaluation[][],
-  highContrast: boolean = false
-): string {
-  const correctEmoji = highContrast ? '🟧' : '🟩';
-  const presentEmoji = highContrast ? '🟦' : '🟨';
-  const absentEmoji = '⬛';
-
+/** Coloured squares only, so sharing never gives the word away. */
+export function generateEmojiGrid(history: LetterEvaluation[][], highContrast = false): string {
+  const hit = highContrast ? '🟧' : '🟩';
+  const near = highContrast ? '🟦' : '🟨';
   return history
-    .map(row => {
-      return row
-        .map(cell => {
-          if (cell.state === 'correct') return correctEmoji;
-          if (cell.state === 'present') return presentEmoji;
-          return absentEmoji;
-        })
-        .join('');
-    })
+    .map((row) => row.map((c) => (c.state === 'correct' ? hit : c.state === 'present' ? near : '⬜')).join(''))
     .join('\n');
 }
 
-/**
- * Builds the complete share text snippet.
- */
-export function buildShareText(options: ShareOptions): string {
-  const {
-    mode,
-    wordLength,
-    maxAttempts,
-    attemptsUsed,
-    won,
-    history,
-    highContrast = false,
-    hardMode = false,
-  } = options;
+const PATHS: Record<GameMode, string> = { daily: '/daily', practice: '/practice', timed: '/timed', random: '/' };
 
-  let header = APP_NAME;
-  if (mode === 'timed') {
-    header += ` - Timed Mode (${wordLength} letters)`;
-  } else if (mode === 'practice') {
-    header += ` - Practice (${wordLength} letters)`;
-  } else {
-    header += ` (${wordLength} letters)`;
-  }
-
-  const score = `${won ? attemptsUsed : 'X'}/${maxAttempts}${hardMode ? '*' : ''}`;
-  const grid = generateEmojiGrid(history, highContrast);
-
-  return `${header} ${score}\n\n${grid}\n\nPlay at: ${window.location.origin}`;
+export function buildShareText(o: ShareOptions): string {
+  const score = `${o.won ? o.attemptsUsed : 'X'}/${o.maxAttempts}${o.hardMode ? '*' : ''}`;
+  const title =
+    o.mode === 'daily' && o.puzzle
+      ? `${SITE.name} #${o.puzzle}`
+      : `${SITE.name} ${o.mode === 'timed' ? 'timed, ' : ''}${o.wordLength} letters`;
+  const url = `${SITE.url}${PATHS[o.mode] === '/' ? '' : PATHS[o.mode]}`;
+  return `${title} ${score}\n\n${generateEmojiGrid(o.history, o.highContrast)}\n\n${url}`;
 }
 
-/**
- * Shares game results via Web Share API or falls back to Clipboard.
- * Returns true if copied or shared successfully.
- */
-export async function shareGameResult(options: ShareOptions): Promise<{ shared: boolean; message: string }> {
-  const text = buildShareText(options);
-
-  if (navigator.share && /mobile|android|iphone/i.test(navigator.userAgent)) {
+/** Shares with the system share sheet on phones, otherwise copies to the clipboard. */
+export async function shareGameResult(o: ShareOptions): Promise<{ ok: boolean; message: string }> {
+  const text = buildShareText(o);
+  if (navigator.share && /mobile|android|iphone|ipad/i.test(navigator.userAgent)) {
     try {
-      await navigator.share({
-        title: APP_NAME,
-        text: text,
-      });
-      return { shared: true, message: 'Result shared!' };
-    } catch (err: unknown) {
-      if ((err as Error).name === 'AbortError') {
-        return { shared: false, message: 'Share cancelled' };
-      }
-      // Fallback to clipboard
+      await navigator.share({ text });
+      return { ok: true, message: 'Shared' };
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') return { ok: false, message: '' };
     }
   }
-
   try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-      return { shared: true, message: 'Result copied to clipboard!' };
-    }
-    // Fallback for older browsers
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    return { shared: true, message: 'Result copied to clipboard!' };
+    await navigator.clipboard.writeText(text);
+    return { ok: true, message: 'Copied to clipboard' };
   } catch {
-    return { shared: false, message: 'Failed to copy result' };
+    return { ok: false, message: 'Couldn’t copy, sorry' };
   }
 }

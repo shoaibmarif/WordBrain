@@ -1,7 +1,7 @@
 import { LetterEvaluation, LetterState } from './types';
 
 /**
- * Evaluates a guessed word against a target word using standard Wordle two-pass matching.
+ * Evaluates a guessed word against a target word in two passes: exact matches first, then letters in the wrong spot.
  * Handles duplicate letters with strict accuracy.
  *
  * Pass 1: Mark all exact character matches (correct).

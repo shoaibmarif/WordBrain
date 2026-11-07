@@ -1,44 +1,29 @@
 import React from 'react';
-import { SeoHead } from '../components/common/SeoHead';
-import { GameView } from '../components/GameView/GameView';
-import { GameMode, WordLength, Difficulty } from '../game/types';
-import { APP_NAME } from '../utils/constants';
+import { Link } from 'react-router-dom';
+import { GameView } from '../components/game/GameView';
+import { GamePage } from '../components/game/GamePage';
 
-interface PracticePageProps {
-  hardMode: boolean;
-  soundEnabled: boolean;
-  animationsEnabled: boolean;
-  highContrast: boolean;
-  wordLength: WordLength;
-  difficulty: Difficulty;
-  onWordLengthChange: (len: WordLength) => void;
-  onDifficultyChange: (diff: Difficulty) => void;
-  onOpenStats: () => void;
-  onOpenSettings: () => void;
-  onOpenHelp: () => void;
-  streak: { currentStreak: number; maxStreak: number };
-  onGameEnd: (params: {
-    mode: GameMode;
-    wordLength: WordLength;
-    targetWord: string;
-    guesses: string[];
-    won: boolean;
-    attemptsUsed: number;
-    maxAttempts: number;
-    durationSeconds: number;
-    hintsUsed: number;
-  }) => void;
-}
-
-export const PracticePage: React.FC<PracticePageProps> = props => {
-  return (
-    <>
-      <SeoHead
-        title={`Unlimited Practice Mode with Vocabulary Hints | ${APP_NAME}`}
-        description="Practice word guessing with unlimited puzzles and optional hints. Reveal letters or eliminate unused consonants at your own pace."
-        canonicalPath="/practice"
-      />
-      <GameView mode="practice" {...props} />
-    </>
-  );
-};
+export const Practice: React.FC = () => (
+  <GamePage path="/practice" game={<GameView mode="practice" title="Practice with hints" />}>
+    <section className="prose-page">
+      <h2>No pressure, a couple of hints</h2>
+      <p>
+        Practice games don’t count towards your stats or your streak, so this is the place to try a new starting word, get used
+        to longer words or just play without worrying about the score.
+      </p>
+      <p>When you’re stuck, two hints sit under the board:</p>
+      <ul>
+        <li>
+          <strong>Show a letter</strong> tells you one letter and where it goes. It never repeats a letter you already have.
+        </li>
+        <li>
+          <strong>Rule out 3 letters</strong> greys out three letters on the keyboard that aren’t in the word.
+        </li>
+      </ul>
+      <p>
+        Use as many as you like. If you want to get better without hints, our <Link to="/strategies">tips page</Link> covers the
+        habits that make the biggest difference.
+      </p>
+    </section>
+  </GamePage>
+);

@@ -2,57 +2,96 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>WordBrain - Free Word Guessing & Brain Training Game</title>
-    <meta
-      name="description"
-      content="Train your mind with WordBrain! Guess the hidden word in six attempts, play unlimited random, practice, and timed modes, and track your streaks."
-    />
-    <meta name="keywords" content="wordbrain, word puzzle, word challenge, free word game, guess word, vocabulary puzzle, brain teaser, wordle clone" />
-    <meta name="theme-color" content="#10b981" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!--seo-head-->
+    <meta name="application-name" content="WordBrain" />
+    <meta name="apple-mobile-web-app-title" content="WordBrain" />
+    <meta name="author" content="Shoaib Arif" />
+    <meta name="theme-color" content="#f7f2e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16181f" media="(prefers-color-scheme: dark)" />
+    <meta name="format-detection" content="telephone=no" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://wordbrain.app/" />
-    <meta property="og:title" content="WordBrain - Free Word Challenge & Brain Training" />
-    <meta
-      property="og:description"
-      content="Train your mind with WordBrain! Guess the hidden word in six attempts, play unlimited random, practice, and timed modes, and track your streaks."
-    />
-    <meta property="og:image" content="/favicon.svg" />
-    <meta property="og:site_name" content="WordBrain" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://wordbrain.app/" />
-    <meta name="twitter:title" content="WordBrain - Free Word Challenge & Brain Training" />
-    <meta
-      name="twitter:description"
-      content="Train your mind with WordBrain! Guess the hidden word in six attempts, play unlimited random, practice, and timed modes, and track your streaks."
-    />
-    <meta name="twitter:image" content="/favicon.svg" />
-
-    <!-- Icons & Manifest -->
+    <!-- Google Search shows a favicon only if it is a multiple of 48px (or SVG). -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
-    <!-- Google Fonts Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2LMQGW0E4B"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&display=swap"
+    />
 
-  gtag('config', 'G-2LMQGW0E4B');
-</script>
+    <!-- Apply the saved theme before first paint to avoid a light/dark flash. -->
+    <script>
+      (function () {
+        try {
+          var t = JSON.parse(localStorage.getItem('wg_user_settings_v1_theme') || '"light"');
+          if (t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Consent Mode defaults: analytics on unless the visitor opted out. Ads always off. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      (function () {
+        var optedOut = false;
+        try {
+          optedOut = localStorage.getItem('wordbrain.consent') === 'denied';
+        } catch (e) {}
+        gtag('consent', 'default', {
+          analytics_storage: optedOut ? 'denied' : 'granted',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied'
+        });
+      })();
+      gtag('js', new Date());
+    </script>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-KVDBLKFC');
+    </script>
+    <!-- End Google Tag Manager -->
   </head>
-  <body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-emerald-500 selection:text-white">
-    <div id="root"></div>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KVDBLKFC"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <div id="root"><!--seo-body--></div>
+    <noscript>
+      <p style="max-width: 40rem; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif">
+        WordBrain needs JavaScript to play. Please enable JavaScript in your browser.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

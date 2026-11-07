@@ -4,7 +4,7 @@ export type CellState = LetterState | 'empty' | 'tbd';
 
 export type GameStatus = 'playing' | 'won' | 'lost' | 'paused';
 
-export type GameMode = 'random' | 'practice' | 'timed';
+export type GameMode = 'random' | 'practice' | 'timed' | 'daily';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
